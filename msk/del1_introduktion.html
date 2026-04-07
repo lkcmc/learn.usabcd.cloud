@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Del 1 – Introduktion til muskuloskeletal ultralyd</title>
+<style>
+  :root {
+    --blue-dark:  #1F497D;
+    --blue-mid:   #2E75B6;
+    --blue-light: #EEF4FB;
+    --blue-accent:#BDD7EE;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --grey-text:  #333;
+    --grey-light: #F5F7FA;
+    --border:     #D0DFF0;
+    --white:      #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--grey-text);
+    background: #F0F4F9;
+  }
+
+  /* ── Progress bar ── */
+  #progress-bar {
+    position: fixed; top: 0; left: 0; width: 0%; height: 4px;
+    background: var(--blue-mid); z-index: 1000;
+    transition: width 0.2s ease;
+  }
+
+  /* ── Layout ── */
+  .page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── Course header ── */
+  .course-header {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+  .course-header .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.8rem;
+  }
+  .course-header h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .course-header p {
+    opacity: 0.88;
+    font-size: 1rem;
+  }
+
+  /* ── TOC ── */
+  .toc {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--blue-mid);
+    margin-bottom: 0.8rem;
+  }
+  .toc ol {
+    padding-left: 1.2rem;
+  }
+  .toc li {
+    margin-bottom: 0.3rem;
+  }
+  .toc a {
+    color: var(--blue-dark);
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  .toc a:hover { text-decoration: underline; color: var(--blue-mid); }
+
+  /* ── Section card ── */
+  .section-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 2rem 2rem 2.2rem;
+    margin-bottom: 2rem;
+    scroll-margin-top: 1.5rem;
+  }
+
+  .section-number {
+    display: inline-block;
+    background: var(--blue-mid);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    margin-bottom: 0.6rem;
+  }
+
+  .section-card h2 {
+    font-size: 1.45rem;
+    color: var(--blue-dark);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--blue-accent);
+  }
+
+  .section-card h3 {
+    font-size: 1.1rem;
+    color: var(--blue-mid);
+    font-weight: 600;
+    margin: 1.5rem 0 0.6rem;
+  }
+
+  .section-card p {
+    margin-bottom: 0.9rem;
+  }
+
+  .section-card ul, .section-card ol {
+    padding-left: 1.5rem;
+    margin-bottom: 0.9rem;
+  }
+  .section-card li {
+    margin-bottom: 0.35rem;
+  }
+
+  /* ── Images ── */
+  .img-block {
+    margin: 1.4rem 0;
+    text-align: center;
+  }
+  .img-block img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .img-block.wide img { max-width: 100%; }
+  .img-block.medium img { max-width: 70%; }
+  .img-block.small img { max-width: 45%; }
+
+  .img-caption {
+    font-size: 0.87rem;
+    color: #666;
+    font-style: italic;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+
+  /* Side-by-side images */
+  .img-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1.4rem 0;
+    align-items: flex-start;
+  }
+  .img-row .img-block {
+    flex: 1;
+    margin: 0;
+  }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    border-left: 4px solid;
+  }
+  .callout.info {
+    background: var(--blue-light);
+    border-color: var(--blue-mid);
+  }
+  .callout.tip {
+    background: var(--green-bg);
+    border-color: var(--green);
+  }
+  .callout.warning {
+    background: var(--orange-bg);
+    border-color: var(--orange);
+  }
+  .callout strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .callout.info strong { color: var(--blue-mid); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+
+  /* ── Definition table ── */
+  .def-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.2rem 0;
+    font-size: 0.93rem;
+  }
+  .def-table th {
+    background: var(--blue-dark);
+    color: white;
+    padding: 0.7rem 0.9rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  .def-table td {
+    padding: 0.65rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .def-table tr:nth-child(even) td { background: var(--grey-light); }
+  .def-table tr:hover td { background: var(--blue-light); }
+
+  /* ── Quiz ── */
+  .quiz-section {
+    background: var(--white);
+    border-radius: 12px;
+    border: 2px solid var(--blue-mid);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .quiz-section h2 {
+    font-size: 1.35rem;
+    color: var(--blue-dark);
+    margin-bottom: 0.4rem;
+  }
+  .quiz-section .quiz-intro {
+    color: #666;
+    font-size: 0.93rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .question-block {
+    background: var(--grey-light);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+  .question-block p.q-text {
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: var(--blue-dark);
+  }
+  .q-options label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+    transition: background 0.15s;
+  }
+  .q-options label:hover { background: var(--blue-accent); }
+  .q-options input[type="radio"] { margin-top: 0.2rem; accent-color: var(--blue-mid); }
+
+  .q-feedback {
+    display: none;
+    margin-top: 0.8rem;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font-size: 0.93rem;
+  }
+  .q-feedback.correct {
+    background: var(--green-bg);
+    color: var(--green);
+    border-left: 3px solid var(--green);
+  }
+  .q-feedback.wrong {
+    background: var(--orange-bg);
+    color: var(--orange);
+    border-left: 3px solid var(--orange);
+  }
+
+  .check-btn {
+    background: var(--blue-mid);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .check-btn:hover { background: var(--blue-dark); }
+
+  /* ── Footer nav ── */
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-block;
+    padding: 0.65rem 1.4rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.93rem;
+    text-decoration: none;
+    background: var(--blue-mid);
+    color: white;
+    transition: background 0.15s;
+  }
+  .nav-btn:hover { background: var(--blue-dark); }
+  .nav-btn.secondary {
+    background: transparent;
+    color: var(--blue-mid);
+    border: 2px solid var(--blue-mid);
+  }
+  .nav-btn.secondary:hover { background: var(--blue-light); }
+
+  @media (max-width: 640px) {
+    .course-header h1 { font-size: 1.4rem; }
+    .section-card { padding: 1.4rem; }
+    .img-row { flex-direction: column; }
+    .img-block.medium img, .img-block.small img { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div class="page-wrapper">
+
+  <!-- ── HEADER ── -->
+  <header class="course-header">
+    <span class="tag">Muskuloskeletal Ultralyd · Del 1</span>
+    <h1>Introduktion til muskuloskeletal ultralyd</h1>
+    <p>Grundprincipper for apparatur, billeddannelse og scanningsteknik</p>
+  </header>
+
+  <!-- ── TOC ── -->
+  <nav class="toc" aria-label="Indholdsfortegnelse">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#s1">Hvad er medicinsk ultralyd?</a></li>
+      <li><a href="#s2">Vævsrefleksion og billedforståelse</a></li>
+      <li><a href="#s3">Transducertyper</a></li>
+      <li><a href="#s4">Billedoptimering: Depth, Gain og Preset</a></li>
+      <li><a href="#s5">Billedorientering</a></li>
+      <li><a href="#s6">Probebevægelser</a></li>
+      <li><a href="#s7">Artefakter</a></li>
+      <li><a href="#s8">Doppler</a></li>
+      <li><a href="#s9">Definitioner og ultralydskarakteristika</a></li>
+      <li><a href="#s10">Praktiske anbefalinger</a></li>
+      <li><a href="#quiz">Vidensspørgsmål</a></li>
+    </ol>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 1 – HVad er medicinsk ultralyd?
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s1">
+    <span class="section-number">Afsnit 1</span>
+    <h2>Hvad er medicinsk ultralyd?</h2>
+
+    <p>Medicinsk ultralyd anvender højfrekvente lydbølger, typisk i frekvensområdet <strong>2–18 MHz</strong>, til at skabe billeder af kroppens indre strukturer. Ultralydsbilledet repræsenterer ét snit ad gangen — en "tynd skive" af det væv, der undersøges.</p>
+
+    <p>En ultralydstransducer udsender korte ultralydsimpulser, som bevæger sig gennem vævet. Når lydbølgerne møder grænseflader mellem forskellige vævstyper — såsom muskulatur, sener, knogle eller kar — reflekteres en del af lyden tilbage mod transduceren som et ekko. Ultralydssystemet registrerer ekkoets styrke og den tid, det tager at vende tilbage, og genererer på den baggrund et todimensionelt billede.</p>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image1.png"
+           alt="Transducer sender og modtager lydbølger">
+      <p class="img-caption">Transduceren udsender lydbølger, der reflekteres fra anatomiske strukturer og registreres som ekko.</p>
+    </div>
+
+    <h3>Frekvens: opløsning vs. penetration</h3>
+    <p>Frekvensen af lydbølgerne er afgørende for billedets opløsning og evnen til at trænge gennem vævet:</p>
+    <ul>
+      <li><strong>Høj frekvens (10–18 MHz):</strong> høj opløsning, men begrænset penetration — anvendes til overfladiske strukturer.</li>
+      <li><strong>Lav frekvens (2–5 MHz):</strong> bedre penetration, men lavere opløsning — anvendes til dybere strukturer (fx hofte).</li>
+    </ul>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image5.png"
+           alt="Lavfrekvent vs højfrekvent lydbølger">
+      <p class="img-caption">Lavfrekvente lydbølger giver bedre penetration; højfrekvente giver bedre opløsning af overfladiske strukturer.</p>
+    </div>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image2.png"
+           alt="Pulsrepetitionsperiode og lytteperiode">
+      <p class="img-caption">Ultralyd sendes som pulser. I lytteperioden analyseres de reflekterede lydbølger.</p>
+    </div>
+
+    <div class="callout info">
+      <strong>Nøglepointe</strong>
+      Det er frekvensen af lydbølgerne inden for hver puls, der er afgørende for billedets opløsning og penetration — ikke antallet af pulser.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 2 – Vævsrefleksion og billedforståelse
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s2">
+    <span class="section-number">Afsnit 2</span>
+    <h2>Vævsrefleksion og billedforståelse</h2>
+
+    <p>Ultralydsbilledet er et gråskalabillede. Jo mere en struktur reflekterer de udsendte lydbølger, desto lysere fremstår den på skærmen. Denne forskel i ekkointensitet danner grundlaget for at skelne mellem vævstyper og patologiske forandringer.</p>
+
+    <table class="def-table">
+      <thead>
+        <tr>
+          <th>Betegnelse</th>
+          <th>Udseende</th>
+          <th>Eksempler</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hyperekkogen</strong></td>
+          <td>Hvid / lys grå</td>
+          <td>Knogleoverflader, kalcifikationer, sener (i længdesnit)</td>
+        </tr>
+        <tr>
+          <td><strong>Hypoekkogen</strong></td>
+          <td>Mørk grå</td>
+          <td>Muskulatur, synovialt væv, inflammation</td>
+        </tr>
+        <tr>
+          <td><strong>Anekkoisk</strong></td>
+          <td>Sort</td>
+          <td>Væske, blod, cyster</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image7.png"
+           alt="Eksempel på ultralydsbillede">
+      <p class="img-caption">Eksempel på et muskuloskeletalt ultralydsbillede med variation i ekkogenicitet.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 3 – Transducertyper
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s3">
+    <span class="section-number">Afsnit 3</span>
+    <h2>Transducertyper</h2>
+
+    <p>I muskuloskeletal ultralyd anvendes primært to transducertyper:</p>
+
+    <h3>Lineær transducer</h3>
+    <p>Højfrekvens (typisk <strong>10–18 MHz</strong>). Standardtransduceren i MSUS. Anvendes til overfladiske strukturer: led, sener, muskler, bursae og nerver. Giver høj opløsning.</p>
+
+    <h3>Konveks (abdominal) transducer</h3>
+    <p>Lavere frekvens. Giver bedre penetration på bekostning af opløsning. Anvendes ved dybere strukturer, fx <strong>hofteled</strong> og dybe gluteale strukturer.</p>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image4.png"
+           alt="Lineær og konveks transducer side om side">
+      <p class="img-caption">Til venstre: lineær transducer. Til højre: konveks transducer. Den lineære er standardtransduceren ved MSUS.</p>
+    </div>
+
+    <div class="callout tip">
+      <strong>Husk</strong>
+      Høj frekvens = høj opløsning, lav penetration. Lav frekvens = lav opløsning, høj penetration. Vælg transducer ud fra strukturens dybde.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 4 – Billedoptimering
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s4">
+    <span class="section-number">Afsnit 4</span>
+    <h2>Billedoptimering: Depth, Gain og Preset</h2>
+
+    <h3>Dybde (Depth)</h3>
+    <p>Dybden angiver, hvor langt ned i vævet billedet vises. Start med relativt stor dybde for at få overblik, og indsnævr derefter, så de relevante strukturer fremstår størst muligt og centreret i billedet.</p>
+    <ul>
+      <li><strong>For lav dybde:</strong> risiko for tunnelsyn — dele af strukturen overses.</li>
+      <li><strong>For stor dybde:</strong> reducerer opløsningen af overfladiske strukturer.</li>
+    </ul>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image8.png"
+             alt="Depth-knap på ultralydsmaskine">
+        <p class="img-caption">Depth justeres via den markerede knap på apparatet.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image10.png"
+             alt="Dybde-indikator på skærm">
+        <p class="img-caption">Den røde boks viser dybdeskalaen i cm langs billedets side.</p>
+      </div>
+    </div>
+
+    <h3>Gain</h3>
+    <p>Gain er forstærkningen af det reflekterede signal og justerer billedets lysstyrke og kontrast.</p>
+    <ul>
+      <li><strong>For lav gain (undergain):</strong> mørkt billede med tab af detaljer.</li>
+      <li><strong>For høj gain (overgain):</strong> overbelyst billede med nedsat kontrast og risiko for fejltolkning.</li>
+      <li><strong>Optimalt:</strong> bløddelene fremstår jævnt grå; væske er fortsat anekkoisk (sort).</li>
+    </ul>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image16.png"
+             alt="Gain-knap på ultralydsmaskine">
+        <p class="img-caption">Gain justeres ved at dreje på den markerede knap.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image9.png"
+             alt="Undergain, normal gain og overgain sammenligning">
+        <p class="img-caption">Fra venstre: undergain (for mørkt), korrekt gain, overgain (for lyst).</p>
+      </div>
+    </div>
+
+    <h3>Preset</h3>
+    <p>Et preset er en foruddefineret samling af indstillinger, optimeret til en given undersøgelsestype. I mange systemer vælges preset automatisk, når en transducer aktiveres — men et preset er ikke nødvendigvis optimalt i alle situationer. Det anbefales at afprøve og vælge det preset, der giver bedst billedkvalitet i den konkrete kliniske kontekst.</p>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image11.png"
+           alt="Preset-menu på ultralydsmaskine">
+      <p class="img-caption">Tryk på probe-knappen (rød pil), vælg lineær probe, og tryk på MSK på skærmen for at vælge MSK-preset.</p>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 5 – Billedorientering
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s5">
+    <span class="section-number">Afsnit 5</span>
+    <h2>Billedorientering</h2>
+
+    <p>Korrekt orientering af ultralydsbilledet er afgørende for anatomisk forståelse, korrekt billedtolkning og entydig kommunikation af fund.</p>
+
+    <h3>Orientation Marker (OM) og Orientation Indicator (OI)</h3>
+    <p>Ultralydssystemet anvender et referencesystem: en <strong>orientation marker (OM)</strong> på transduceren og en <strong>orientation indicator (OI)</strong> på skærmen.</p>
+
+    <div class="callout info">
+      <strong>Grundregel</strong>
+      OM og OI skal altid svare til hinanden. Gør de ikke det, er billedet spejlvendt og kan ikke tolkes korrekt.
+    </div>
+
+    <h3>Fingertesten</h3>
+    <p>Berør kortvarigt den side af transduceren, hvor OM er placeret. Bevægelsen skal ses ved OI på skærmen. Ses den modsat, skal transduceren roteres 180°. Udfør fingertesten ved opstart af <em>hver</em> scanning.</p>
+
+    <h3>Transversal scanning</h3>
+    <p>Transduceren placeres vinkelret på strukturens længdeakse. Billedkonvention i dette kursus:</p>
+    <ul>
+      <li>Venstre side af billedet = patientens <strong>højre</strong> side</li>
+      <li>Øverste del = <strong>superficielle</strong> strukturer</li>
+      <li>Nederste del = <strong>dybere</strong> strukturer</li>
+    </ul>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image13.png"
+           alt="Transversal billedorientering">
+      <p class="img-caption">Transversal scanning: patientens højre side er til venstre i billedet. Superficielle strukturer øverst.</p>
+    </div>
+
+    <h3>Longitudinel scanning</h3>
+    <p>Transduceren placeres parallelt med strukturens længdeakse. Billedkonvention:</p>
+    <ul>
+      <li>Venstre side af billedet = <strong>proksimalt/kranialt</strong></li>
+      <li>Højre side = <strong>distalt</strong></li>
+      <li>Øverste del = <strong>superficielt</strong></li>
+    </ul>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image14.png"
+           alt="Longitudinel billedorientering">
+      <p class="img-caption">Longitudinel scanning: proksimalt/kranialt til venstre, distalt til højre.</p>
+    </div>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image3.png"
+           alt="Longitudinelt og transversalt plan side om side">
+      <p class="img-caption">Sammenligning: longitudinelt (længdesnit) og transversalt (tværsnit) af samme struktur.</p>
+    </div>
+
+    <div class="callout tip">
+      <strong>Praktisk anbefaling</strong>
+      For nye ultralydsbrugere kan det være en fordel at placere OI konsekvent i øverste højre hjørne af skærmen — dette giver en mere intuitiv sammenhæng mellem transducerens orientering og billedforståelsen.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 6 – Probebevægelser
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s6">
+    <span class="section-number">Afsnit 6</span>
+    <h2>Probebevægelser</h2>
+
+    <p>Ultralydsbilledet repræsenterer kun et meget tyndt vævssnit. For nye ultralydsbrugere er det vigtigt at vænne sig til at "fange" strukturen gennem små, kontrollerede justeringer. Udfør kun <strong>én bevægelse ad gangen</strong> til at begynde med.</p>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image6.png"
+           alt="Oversigt over probebevægelser">
+      <p class="img-caption">De fem grundlæggende probebevægelser: Slide, Rotate, Tilt, Rock og Kompression.</p>
+    </div>
+
+    <table class="def-table">
+      <thead>
+        <tr><th>Bevægelse</th><th>Beskrivelse</th><th>Primær anvendelse</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Slide</strong></td>
+          <td>Transduceren flyttes hen over huden</td>
+          <td>Lokalisere strukturer, følge forløb</td>
+        </tr>
+        <tr>
+          <td><strong>Rotate</strong></td>
+          <td>Transduceren drejes</td>
+          <td>Skifte mellem transversal og longitudinel scanning</td>
+        </tr>
+        <tr>
+          <td><strong>Tilt</strong></td>
+          <td>Transduceren vippes — ændrer indfaldsvinklen</td>
+          <td>Undgå anisotropi; særligt vigtig ved sener</td>
+        </tr>
+        <tr>
+          <td><strong>Rock</strong></td>
+          <td>Finjustering langs transducerens længdeakse</td>
+          <td>Optimal centrering af strukturen i billedet</td>
+        </tr>
+        <tr>
+          <td><strong>Kompression</strong></td>
+          <td>Let tryk mod huden</td>
+          <td>Vurdere forskydelighed af væske; skelne væske fra synovit</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image12.png"
+           alt="Tilt-bevægelse illustration">
+      <p class="img-caption">Tilt: transduceren vippes for at ændre indfaldsvinklen og undgå anisotropi.</p>
+    </div>
+
+    <div class="callout warning">
+      <strong>Vigtigt</strong>
+      Beherskelse af probebevægelserne er afgørende for stabile, reproducerbare og diagnostisk pålidelige billeder. Dette kræver gentaget praktisk træning.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 7 – Artefakter
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s7">
+    <span class="section-number">Afsnit 7</span>
+    <h2>Artefakter i muskuloskeletal ultralyd</h2>
+
+    <p>Artefakter er billedfænomener, der <em>ikke</em> repræsenterer reel anatomi eller patologi. De kan føre til fejltolkning, men er meget lærerige, når man forstår deres årsag.</p>
+
+    <table class="def-table">
+      <thead>
+        <tr><th>Artefakt</th><th>Årsag</th><th>Udseende og klinisk relevans</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Skygning (Shadowing)</strong></td>
+          <td>Knogle reflekterer næsten al ultralyd</td>
+          <td>Sort skygge distalt for knogleoverfladen. Normalfund.</td>
+        </tr>
+        <tr>
+          <td><strong>Enhancement</strong></td>
+          <td>Væske transmitterer ultralyd effektivt</td>
+          <td>Øget ekkointensitet distalt for væske. Kan hjælpe til at identificere væskeholdige strukturer.</td>
+        </tr>
+        <tr>
+          <td><strong>Reverberation</strong></td>
+          <td>Gentagne refleksioner mellem stærkt reflekterende overflader</td>
+          <td>Parallelle ekko-linjer. Ses fx ved nåler og luftbobler.</td>
+        </tr>
+        <tr>
+          <td><strong>Anisotropi</strong></td>
+          <td>Ultralyd rammer senen i skrå vinkel</td>
+          <td>Normal sene fremstår kunstigt hypoekkogen. Korrigeres med tilt/rock. Særligt relevant ved sener.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image18.png"
+           alt="Anisotropi illustration">
+      <p class="img-caption">Anisotropi: En normal sene kan fremstå mørk (hypoekkogen) og fejltolkes som patologi, hvis transduceren holder skrå vinkel. Tilt korrigerer dette.</p>
+    </div>
+
+    <div class="callout warning">
+      <strong>Faldgrube</strong>
+      Anisotropi er en hyppig årsag til fejltolkning af sener. Tilpas altid transducerens vinkel (tilt) for at sikre, at senen er reelt hypoekkogen og ikke et artefakt.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 8 – Doppler
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s8">
+    <span class="section-number">Afsnit 8</span>
+    <h2>Doppler</h2>
+
+    <p>Doppler anvendes til vurdering af blodflow og dermed indirekte til påvisning af <strong>inflammation</strong> i led og periartikulære strukturer.</p>
+
+    <p>Ved farve-Doppler repræsenterer farverne flowretning i forhold til transduceren:</p>
+    <ul>
+      <li><strong>Rød:</strong> flow <em>mod</em> transduceren</li>
+      <li><strong>Blå:</strong> flow <em>væk</em> fra transduceren</li>
+    </ul>
+    <p>Farverne angiver udelukkende flowretning og adskiller <em>ikke</em> arterielt fra venøst flow.</p>
+
+    <div class="callout tip">
+      <strong>Huskeregel</strong>
+      "Man går ikke over for rødt lys — bilerne kommer mod dig." Rød = flow mod transduceren.
+    </div>
+
+    <div class="img-block wide">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image17.png"
+           alt="Farve-Doppler billede">
+      <p class="img-caption">Farve-Doppler: rød og blå angiver flowretning. Doppler-aktivitet i synovialt væv taler for aktiv inflammation.</p>
+    </div>
+
+    <h3>Faldgrupper ved Doppler</h3>
+    <ul>
+      <li><strong>Probestabilitet:</strong> selv minimale bevægelser af transduceren kan generere kunstige Dopplersignaler.</li>
+      <li><strong>Gain og skalering:</strong> for høj Doppler-gain eller forkert skala kan give falsk positiv aktivitet.</li>
+    </ul>
+
+    <div class="callout warning">
+      <strong>Vigtigt</strong>
+      Korrekt Doppleroptimering er en praktisk færdighed, der kræver gentagen træning. Den kan ikke opnås alene gennem teoretisk viden.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 9 – Definitioner og ultralydskarakteristika
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s9">
+    <span class="section-number">Afsnit 9</span>
+    <h2>Definitioner og ultralydskarakteristika</h2>
+
+    <p>Præcis terminologi er afgørende for korrekt tolkning og kommunikation af ultralydsfund. Nedenstående tabel beskriver de vigtigste tilstande i muskuloskeletal ultralyd.</p>
+
+    <div style="overflow-x:auto;">
+    <table class="def-table">
+      <thead>
+        <tr>
+          <th>Tilstand</th>
+          <th>Definition</th>
+          <th>Ultralydskarakteristika</th>
+          <th>Kliniske pointer / faldgrupper</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Effusion</strong></td>
+          <td>Fri væske i ledhulen, komprimerbar og displacerbar</td>
+          <td>Anekkoisk/hypoekkogen · Komprimerbar · Displacerbar · Ingen Doppler i væsken</td>
+          <td>Uspecifikt fund. Effusion alene er ikke synovit. For hårdt tryk kan eliminere små effusioner.</td>
+        </tr>
+        <tr>
+          <td><strong>Synovial hypertrofi</strong></td>
+          <td>Fortykkelse/proliferation af synovialmembranen</td>
+          <td>Hypoekkoisk synovialt væv · Ikke displacerbart · Ikke komprimerbartKan have intra-synovial Doppler</td>
+          <td>Kan være aktiv (med Doppler) eller inaktiv/fibrotisk (uden Doppler).</td>
+        </tr>
+        <tr>
+          <td><strong>Synovit</strong></td>
+          <td>Inflammation i synovialmembranen. UL-defineret ved synovial hypertrofi</td>
+          <td>Synovial hypertrofi · Doppler angiver inflammatorisk aktivitet · Effusion kan sameksistere</td>
+          <td>Aktiv synovit = synovial hypertrofi + Doppler. Effusion alene er <em>ikke</em> synovit.</td>
+        </tr>
+        <tr>
+          <td><strong>Tenosynovit</strong></td>
+          <td>Synovial inflammation i seneskedens synovium</td>
+          <td>Fortykket hypoekkoisk synovialt væv i seneskede ± Væske i skeden · Doppler ved aktiv inflammation</td>
+          <td>Væske alene er ikke diagnostisk. Verificer i både longitudinelt og transversalt plan. Anisotropi må ikke fejltolkes.</td>
+        </tr>
+        <tr>
+          <td><strong>Bursit</strong></td>
+          <td>Inflammation i synovialbeklædt bursa</td>
+          <td>Anekkoisk/hypoekkogen væske i bursa · Fortykket bursavæg ± Doppler · Komprimerbar</td>
+          <td>Fysiologisk tynd bursa kan ligne patologi. Doppler taler for aktiv inflammation.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       AFSNIT 10 – Praktiske anbefalinger og pit-falls
+  ══════════════════════════════════════════════════════════ -->
+  <section class="section-card" id="s10">
+    <span class="section-number">Afsnit 10</span>
+    <h2>Praktiske anbefalinger og pit-falls</h2>
+
+    <h3>Dos</h3>
+    <ul>
+      <li>Anvend <strong>rigeligt ultralydsgel</strong> — selv tynde luftlag forringer billedkvaliteten markant. Ved injektioner kan sprit anvendes som ultralydsmedium.</li>
+      <li>Positionér patienten <strong>komfortabelt og funktionelt</strong> i forhold til det led, der undersøges.</li>
+      <li>Start med <strong>bred scanning</strong> for at identificere anatomiske landemærker — indsnævr derefter fokus.</li>
+      <li>Udfør konsekvent <strong>fingertesten</strong> ved opstart for at sikre korrekt billedorientering.</li>
+      <li>Vær altid opmærksom på <strong>artefakter</strong> — de kan give vigtig information.</li>
+    </ul>
+
+    <h3>Don'ts / faldgrupper</h3>
+    <ul>
+      <li><strong>Sener:</strong> undersøg i udstrakt stilling for optimal visualisering. Ved Doppler skal senen dog være <em>afslappet</em> for at undgå afklemning af blodflow.</li>
+      <li><strong>Bursae:</strong> undgå hårdt tryk — komprimerer bursa og skjuler væske.</li>
+      <li><strong>Små led og væskeansamlinger:</strong> for kraftig kompression kan få væske til at forsvinde og reducere Dopplersignal.</li>
+      <li><strong>Trykmanøvre:</strong> let kompression kan skelne fri væske (forskydelig) fra synovial hypertrofi (ikke forskydelig).</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Husk altid</strong>
+      Ultralyd kan aldrig stå alene. Den objektive kliniske undersøgelse danner altid grundlag for identifikation af mistænkte strukturer, og ultralyd bruges til at bekræfte eller afkræfte patologi.
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════════
+       QUIZ
+  ══════════════════════════════════════════════════════════ -->
+  <section class="quiz-section" id="quiz">
+    <h2>🎯 Vidensspørgsmål — Del 1</h2>
+    <p class="quiz-intro">Besvar spørgsmålene og tryk "Tjek svar" for at se, om du har ret.</p>
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <p class="q-text">1. Hvilken struktur vil typisk fremstå anekkoisk (sort) på et ultralydsbillede?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q1" value="A"> A) Knogle</label>
+        <label><input type="radio" name="q1" value="B"> B) Sene</label>
+        <label><input type="radio" name="q1" value="C"> C) Muskel</label>
+        <label><input type="radio" name="q1" value="D"> D) Væske</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q1','D','q1-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q1-fb"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <p class="q-text">2. Hvad er det vigtigste formål med at støtte hånden mod patienten under scanning?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q2" value="A"> A) Øge billedets kontrast</label>
+        <label><input type="radio" name="q2" value="B"> B) Reducere artefakter fra patientens bevægelse</label>
+        <label><input type="radio" name="q2" value="C"> C) Sikre stabil probeføring og dermed et roligt billede</label>
+        <label><input type="radio" name="q2" value="D"> D) Øge Dopplersignalets følsomhed</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q2','C','q2-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q2-fb"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <p class="q-text">3. Hvilken probebevægelse er særlig vigtig for at undgå anisotropi ved scanning af sener?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q3" value="A"> A) Slide</label>
+        <label><input type="radio" name="q3" value="B"> B) Rotation</label>
+        <label><input type="radio" name="q3" value="C"> C) Tilt</label>
+        <label><input type="radio" name="q3" value="D"> D) Kompression</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q3','C','q3-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q3-fb"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+      <p class="q-text">4. Hvad kendetegner for høj gain (overgain)?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q4" value="A"> A) Billedet bliver for mørkt med tab af detaljer</label>
+        <label><input type="radio" name="q4" value="B"> B) Overfladiske strukturer forsvinder</label>
+        <label><input type="radio" name="q4" value="C"> C) Billedet bliver overbelyst med nedsat kontrast</label>
+        <label><input type="radio" name="q4" value="D"> D) Penetrationen øges markant</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q4','C','q4-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q4-fb"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+      <p class="q-text">5. Hvad er grundreglen for orientation marker (OM) og orientation indicator (OI)?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q5" value="A"> A) OM skal altid pege mod patientens hoved</label>
+        <label><input type="radio" name="q5" value="B"> B) OI skal altid være placeret i venstre side af skærmen</label>
+        <label><input type="radio" name="q5" value="C"> C) OM og OI skal svare til hinanden</label>
+        <label><input type="radio" name="q5" value="D"> D) OM skal altid pege lateralt</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q5','C','q5-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q5-fb"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block">
+      <p class="q-text">6. Hvad angiver farverne rød og blå ved farve-Doppler?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q6" value="A"> A) Arterielt versus venøst flow</label>
+        <label><input type="radio" name="q6" value="B"> B) Flowhastighed</label>
+        <label><input type="radio" name="q6" value="C"> C) Flowretning i forhold til transduceren</label>
+        <label><input type="radio" name="q6" value="D"> D) Graden af inflammation</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q6','C','q6-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q6-fb"></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-block">
+      <p class="q-text">7. Hvilket artefakt gør, at en normal sene kan fremstå kunstigt anekkoisk?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q7" value="A"> A) Shadowing</label>
+        <label><input type="radio" name="q7" value="B"> B) Enhancement</label>
+        <label><input type="radio" name="q7" value="C"> C) Reverberation</label>
+        <label><input type="radio" name="q7" value="D"> D) Anisotropi</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q7','D','q7-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q7-fb"></div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="question-block">
+      <p class="q-text">8. Hvordan kan man bedst skelne mellem fri væske og synovial hypertrofi?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q8" value="A"> A) Øge gain</label>
+        <label><input type="radio" name="q8" value="B"> B) Bruge Doppler alene</label>
+        <label><input type="radio" name="q8" value="C"> C) Anvende let kompression</label>
+        <label><input type="radio" name="q8" value="D"> D) Skifte transducer</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q8','C','q8-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q8-fb"></div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="question-block">
+      <p class="q-text">9. Et billede viser korrekt kontrast, men målstrukturen fylder kun øverste tredjedel af skærmen. Hvad er den bedste justering?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q9" value="A"> A) Øge gain</label>
+        <label><input type="radio" name="q9" value="B"> B) Mindske depth</label>
+        <label><input type="radio" name="q9" value="C"> C) Skifte transducer</label>
+        <label><input type="radio" name="q9" value="D"> D) Aktivere Doppler</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q9','B','q9-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q9-fb"></div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="question-block">
+      <p class="q-text">10. Hvilken probebevægelse ændrer primært snitretningen?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q10" value="A"> A) Slide</label>
+        <label><input type="radio" name="q10" value="B"> B) Rotate</label>
+        <label><input type="radio" name="q10" value="C"> C) Tilt</label>
+        <label><input type="radio" name="q10" value="D"> D) Rock</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q10','B','q10-fb')">Tjek svar</button>
+      <div class="q-feedback" id="q10-fb"></div>
+    </div>
+
+  </section>
+
+  <!-- ── Footer navigation ── -->
+  <nav class="nav-footer">
+    <span style="color:#999; font-size:0.9rem;">Del 1 af 5 moduler</span>
+    <a href="del1_injektioner.html" class="nav-btn">Næste: Injektioner →</a>
+  </nav>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Quiz checker
+  const explanations = {
+    q1:  { correct: 'D', text: 'Korrekt! Væske transmitterer lydbølger uden refleksion og fremstår sort (anekkoisk).' },
+    q2:  { correct: 'C', text: 'Korrekt! Stabil probeføring giver et roligt, reproducerbart billede.' },
+    q3:  { correct: 'C', text: 'Korrekt! Tilt ændrer indfaldsvinklen og korrigerer anisotropi ved sener.' },
+    q4:  { correct: 'C', text: 'Korrekt! Overgain giver et overbelyst billede med nedsat kontrast.' },
+    q5:  { correct: 'C', text: 'Korrekt! OM og OI skal svare til hinanden — ellers er billedet spejlvendt.' },
+    q6:  { correct: 'C', text: 'Korrekt! Rød/blå angiver flowretning ift. transduceren — ikke flow-type.' },
+    q7:  { correct: 'D', text: 'Korrekt! Anisotropi opstår, når ultralyd rammer senen i skrå vinkel.' },
+    q8:  { correct: 'C', text: 'Korrekt! Let kompression: fri væske er displacerbar; synovial hypertrofi ikke.' },
+    q9:  { correct: 'B', text: 'Korrekt! Reducer depth, så strukturen fylder billedet optimalt.' },
+    q10: { correct: 'B', text: 'Korrekt! Rotate drejer transduceren og skifter snitretning (fx transversal ↔ longitudinel).' },
+  };
+
+  function checkAnswer(qName, correct, fbId) {
+    const selected = document.querySelector(`input[name="${qName}"]:checked`);
+    const fb = document.getElementById(fbId);
+    const exp = explanations[qName];
+    if (!selected) { fb.style.display = 'block'; fb.className = 'q-feedback wrong'; fb.textContent = 'Vælg venligst et svar.'; return; }
+    if (selected.value === exp.correct) {
+      fb.className = 'q-feedback correct';
+      fb.textContent = '✓ ' + exp.text;
+    } else {
+      fb.className = 'q-feedback wrong';
+      fb.textContent = '✗ Ikke korrekt. Rigtigt svar: ' + exp.correct + '. ' + exp.text;
+    }
+    fb.style.display = 'block';
+  }
+</script>
+
+</body>
+</html>

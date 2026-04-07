@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Del 1 – UL-vejledte injektioner</title>
+<style>
+  :root {
+    --blue-dark:  #1F497D;
+    --blue-mid:   #2E75B6;
+    --blue-light: #EEF4FB;
+    --blue-accent:#BDD7EE;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --red:        #C62828;
+    --red-bg:     #FFEBEE;
+    --grey-text:  #333;
+    --grey-light: #F5F7FA;
+    --border:     #D0DFF0;
+    --white:      #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; line-height: 1.7; color: var(--grey-text); background: #F0F4F9; }
+  #progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: var(--blue-mid); z-index: 1000; transition: width 0.2s; }
+  .page-wrapper { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .course-header { background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%); color: white; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+  .course-header .tag { display: inline-block; background: rgba(255,255,255,0.2); color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .course-header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .course-header p { opacity: 0.88; font-size: 1rem; }
+
+  .toc { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem 1.8rem; margin-bottom: 2.5rem; }
+  .toc h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-mid); margin-bottom: 0.8rem; }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--blue-dark); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { text-decoration: underline; }
+
+  .section-card { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 2rem 2rem 2.2rem; margin-bottom: 2rem; scroll-margin-top: 1.5rem; }
+  .section-number { display: inline-block; background: #34495e; color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.7rem; border-radius: 20px; margin-bottom: 0.6rem; }
+  .section-card h2 { font-size: 1.45rem; color: var(--blue-dark); font-weight: 700; margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--blue-accent); }
+  .section-card h3 { font-size: 1.1rem; color: var(--blue-mid); font-weight: 600; margin: 1.5rem 0 0.6rem; }
+  .section-card p { margin-bottom: 0.9rem; }
+  .section-card ul, .section-card ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  .section-card li { margin-bottom: 0.35rem; }
+
+  .img-block { margin: 1.4rem 0; text-align: center; }
+  .img-block img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .img-block.medium img { max-width: 60%; }
+  .img-caption { font-size: 0.87rem; color: #666; font-style: italic; margin-top: 0.5rem; line-height: 1.5; }
+
+  .img-row { display: flex; gap: 1rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row .img-block { flex: 1; margin: 0; }
+
+  .callout { border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0; border-left: 4px solid; }
+  .callout.info { background: var(--blue-light); border-color: var(--blue-mid); }
+  .callout.tip { background: var(--green-bg); border-color: var(--green); }
+  .callout.warning { background: var(--orange-bg); border-color: var(--orange); }
+  .callout.danger { background: var(--red-bg); border-color: var(--red); }
+  .callout strong { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .callout.info strong { color: var(--blue-mid); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+  .callout.danger strong { color: var(--red); }
+
+  /* Dosing table */
+  .dose-table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.92rem; }
+  .dose-table th { background: var(--blue-dark); color: white; padding: 0.65rem 0.9rem; text-align: left; }
+  .dose-table td { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .dose-table tr:nth-child(even) td { background: var(--grey-light); }
+  .dose-table .subrow td { background: #f9f9f9; font-size: 0.88rem; color: #555; }
+
+  .technique-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin: 1.2rem 0; }
+  .technique-card { background: var(--grey-light); border-radius: 8px; padding: 1.1rem 1.2rem; border-top: 3px solid var(--blue-mid); }
+  .technique-card h4 { color: var(--blue-dark); font-size: 1rem; margin-bottom: 0.5rem; }
+  .technique-card p { font-size: 0.93rem; margin: 0; }
+
+  .nav-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .nav-btn { display: inline-block; padding: 0.65rem 1.4rem; border-radius: 8px; font-weight: 600; font-size: 0.93rem; text-decoration: none; background: var(--blue-mid); color: white; transition: background 0.15s; }
+  .nav-btn:hover { background: var(--blue-dark); }
+  .nav-btn.secondary { background: transparent; color: var(--blue-mid); border: 2px solid var(--blue-mid); }
+  .nav-btn.secondary:hover { background: var(--blue-light); }
+
+  @media (max-width: 640px) {
+    .technique-grid { grid-template-columns: 1fr; }
+    .img-row { flex-direction: column; }
+    .img-block.medium img { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div class="page-wrapper">
+
+  <header class="course-header">
+    <span class="tag">Muskuloskeletal Ultralyd · Del 1 – Tillæg</span>
+    <h1>UL-vejledte injektioner</h1>
+    <p>Glukokortikoider, teknik, nålevalg og UL-vejledning</p>
+  </header>
+
+  <nav class="toc">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#s1">Glukokortikoidinjektion: baggrund og indikationer</a></li>
+      <li><a href="#s2">Kontraindikationer</a></li>
+      <li><a href="#s3">Doseringsforslag og nålevalg</a></li>
+      <li><a href="#s4">Fremgangsmåde og efterforløb</a></li>
+      <li><a href="#s5">UL-vejledning: in-plane og out-of-plane teknik</a></li>
+    </ol>
+  </nav>
+
+  <!-- ══ AFSNIT 1 ══ -->
+  <section class="section-card" id="s1">
+    <span class="section-number">Afsnit 1</span>
+    <h2>Glukokortikoidinjektion: baggrund og indikationer</h2>
+
+    <p>Injektion af glukokortikoider i synovialisbeklædte hulrum — led, bursae og seneskeder — har en markant lokal antiinflammatorisk effekt ved aseptisk inflammation. Behandlingen kan også anvendes uden for synovialisbeklædte strukturer, fx ved tendinit og traktionsperiostit relateret til overbelastning.</p>
+
+    <h3>Indikationer</h3>
+    <ul>
+      <li>Reumatoid artrit, psoriasisartrit, enteropati, reaktivt artrit</li>
+      <li>Krystalsynovit (urinsyregigt, CPPD)</li>
+      <li>Osteoartrose med reaktiv synovit</li>
+      <li>Bursit, tenosynovit, tendinit</li>
+    </ul>
+  </section>
+
+  <!-- ══ AFSNIT 2 ══ -->
+  <section class="section-card" id="s2">
+    <span class="section-number">Afsnit 2</span>
+    <h2>Kontraindikationer</h2>
+
+    <h3>Absolutte</h3>
+    <ul>
+      <li>Infektion i led eller periartikulære strukturer</li>
+      <li>Ledprotese</li>
+      <li>Intraartikulær fraktur</li>
+      <li>Sår eller inficeret udslæt over indstikssted</li>
+    </ul>
+
+    <h3>Relative</h3>
+    <ul>
+      <li>Dårligt reguleret diabetes</li>
+      <li>Mangelfuld effekt af tidligere injektioner i samme struktur</li>
+      <li>Koagulationsforstyrrelser</li>
+      <li>Antikoagulationsbehandling</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Antikoagulation</strong>
+      NOAK pauseres som udgangspunkt <em>ikke</em> — studier har ikke vist øget blødningsrisiko. Ved Marevan-behandling kan pause overvejes; INR bør da være &lt; 1,8, men blødningsrisikoen er generelt lav.
+    </div>
+
+    <h3>Komplikationer og bivirkninger (sjældne)</h3>
+    <ul>
+      <li><strong>Infektion</strong> — den alvorligste komplikation</li>
+      <li>Forbigående smertereaktion hos ca. 2%</li>
+      <li>Flushing hos op til 10%</li>
+      <li>Risiko for bruskdestruktion, senenekrose, subkutan nekrose, hudatrofi og sjældent nerveskade</li>
+    </ul>
+
+    <div class="callout danger">
+      <strong>OBS</strong>
+      Injektion er kontraindiceret ved klinisk mistanke om septisk artrit. Aspirer og mikrobiologisk undersøg før behandling ved tvivl.
+    </div>
+  </section>
+
+  <!-- ══ AFSNIT 3 ══ -->
+  <section class="section-card" id="s3">
+    <span class="section-number">Afsnit 3</span>
+    <h2>Doseringsforslag og nålevalg</h2>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image19.png"
+           alt="Kanyler i forskellige størrelser">
+      <p class="img-caption">Kanyler i grå (orange), blå og grøn størrelse til hhv. små, mellemstore og store led.</p>
+    </div>
+
+    <div style="overflow-x:auto;">
+    <table class="dose-table">
+      <thead>
+        <tr>
+          <th>Generisk navn</th>
+          <th>Handelsnavn</th>
+          <th>Små led*</th>
+          <th>Mellemstore led**</th>
+          <th>Store led***</th>
+          <th>Nålevalg</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Triamcinolonacetonid</td>
+          <td>Kenalog</td>
+          <td>10–20 mg</td>
+          <td>20–40 mg</td>
+          <td>40–80 mg</td>
+          <td>Grå/blå → blå/grøn → grøn</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p style="font-size:0.88rem; color:#666; margin-top:0.5rem;">
+      * Små led: MCP, PIP, DIP, CMC, MTP, SC, AC &nbsp;|&nbsp;
+      ** Mellemstore led: Håndled, albue, skulder, ankel &nbsp;|&nbsp;
+      *** Store led: Knæ, hofte
+    </p>
+  </section>
+
+  <!-- ══ AFSNIT 4 ══ -->
+  <section class="section-card" id="s4">
+    <span class="section-number">Afsnit 4</span>
+    <h2>Fremgangsmåde og efterforløb</h2>
+
+    <h3>Fremgangsmåde</h3>
+    <ol>
+      <li>Identificer injektionssted med ultralyd</li>
+      <li>Afsprit hud og ultralydsprobe <strong>tre gange</strong></li>
+      <li>Anvend handsker (ikke nødvendigvis sterile) — steril non-touch-teknik</li>
+      <li>Sikr kanylespidsens frie placering i led eller synovialt hulrum <strong>før</strong> injektion</li>
+      <li>Injicér <strong>aldrig</strong> mod modstand</li>
+      <li>Aspireret led- eller bursavæske kan mikroskoperes for krystaller og sendes til celletælling ± mikrobiologi ved klinisk mistanke</li>
+    </ol>
+
+    <div class="callout warning">
+      <strong>Vigtig regel</strong>
+      Der må ikke injiceres mod modstand. Modstand tyder på forkert placering af nålen (fx i senetissue).
+    </div>
+
+    <h3>Efterforløb og effekt</h3>
+    <ul>
+      <li>Aflastning af det behandlede led anbefales i <strong>24 timer</strong></li>
+      <li>Smertelindring indtræder typisk inden for <strong>1–3 døgn</strong></li>
+    </ul>
+  </section>
+
+  <!-- ══ AFSNIT 5 ══ -->
+  <section class="section-card" id="s5">
+    <span class="section-number">Afsnit 5</span>
+    <h2>UL-vejledning: in-plane og out-of-plane teknik</h2>
+
+    <p>Ultralyd kan guide injektioner og øge præcisionen — særligt ved små led, dybtliggende strukturer og komplekse anatomiske forhold.</p>
+
+    <div class="technique-grid">
+      <div class="technique-card">
+        <h4>In-plane teknik</h4>
+        <p>Nålen føres <strong>parallelt</strong> med ultralydsstrålen og visualiseres i hele sin længde. Giver bedst kontrol over nålens position. <em>Anbefales til mindre erfarne operatører.</em></p>
+      </div>
+      <div class="technique-card">
+        <h4>Out-of-plane teknik</h4>
+        <p>Nålen føres <strong>vinkelret</strong> på ultralydsstrålen og ses kun som et punkt i billedet. Nyttig ved trange anatomiske forhold — kræver erfaring for korrekt lokalisering af nålespidsen.</p>
+      </div>
+    </div>
+
+    <h3>In-plane teknik</h3>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image20.png"
+             alt="In-plane teknik: probe og kanyle">
+        <p class="img-caption">In-plane: nålen føres parallelt med proben.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image21.png"
+             alt="In-plane: nål synlig på UL-billede">
+        <p class="img-caption">Nålen ses som en hyperekkoisk linje i hele sin længde (rød markering).</p>
+      </div>
+    </div>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image22.png"
+           alt="In-plane: tydelig hyperekkoisk nål">
+      <p class="img-caption">Optimal in-plane visualisering: nålen fremstår tydeligt hyperekkoisk.</p>
+    </div>
+
+    <h3>Out-of-plane teknik</h3>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image23.png"
+             alt="Out-of-plane teknik: probe og kanyle">
+        <p class="img-caption">Out-of-plane: nålen føres vinkelret på proben.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image24.png"
+             alt="Out-of-plane: nål ses som punkt">
+        <p class="img-caption">Nålen ses kun som et hyperekkoisk punkt (rød pil). Det er afgørende at kende den præcise dybde.</p>
+      </div>
+    </div>
+
+    <div class="img-block medium">
+      <img src="https://zjhvdxlmfymgncpcdnde.supabase.co/storage/v1/object/public/media-msk/del1/illustrationer/image25.png"
+           alt="Nålartefakt — reverberation">
+      <p class="img-caption">Reverberation fra nålespids: et karakteristisk artefakt, der kan hjælpe til at identificere nålespidsens position.</p>
+    </div>
+
+    <div class="callout tip">
+      <strong>Anbefaling</strong>
+      Start med in-plane teknik. Den giver fuld visualisering af nålens forløb og reducerer risikoen for fejlplacering.
+    </div>
+  </section>
+
+  <!-- ── Footer navigation ── -->
+  <nav class="nav-footer">
+    <a href="del1_introduktion.html" class="nav-btn secondary">← Tilbage til Del 1</a>
+    <span style="color:#999; font-size:0.9rem;">Næste modul: Fingre og håndled</span>
+  </nav>
+
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+</script>
+
+</body>
+</html>
