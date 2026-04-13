@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 1 – Fingre og håndled</title>
+<style>
+  :root {
+    --blue-dark:  #1F497D;
+    --blue-mid:   #2E75B6;
+    --blue-light: #EEF4FB;
+    --blue-accent:#BDD7EE;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --grey-text:  #333;
+    --grey-light: #F5F7FA;
+    --border:     #D0DFF0;
+    --white:      #ffffff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--grey-text);
+    background: #F0F4F9;
+  }
+
+  #progress-bar {
+    position: fixed; top: 0; left: 0; width: 0%; height: 4px;
+    background: var(--blue-mid); z-index: 1000;
+    transition: width 0.2s ease;
+  }
+
+  .page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .course-header {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    color: white;
+    padding: 2.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+  }
+  .course-header .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.8rem;
+  }
+  .course-header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .course-header p { opacity: 0.88; font-size: 1rem; }
+
+  .toc {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--blue-mid);
+    margin-bottom: 0.8rem;
+  }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--blue-dark); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { text-decoration: underline; color: var(--blue-mid); }
+
+  .section-card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 2rem 2rem 2.2rem;
+    margin-bottom: 2rem;
+    scroll-margin-top: 1.5rem;
+  }
+  .section-number {
+    display: inline-block;
+    background: var(--blue-mid);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    margin-bottom: 0.6rem;
+  }
+  .section-card h2 {
+    font-size: 1.45rem;
+    color: var(--blue-dark);
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--blue-accent);
+  }
+  .section-card h3 {
+    font-size: 1.1rem;
+    color: var(--blue-mid);
+    font-weight: 600;
+    margin: 1.5rem 0 0.6rem;
+  }
+  .section-card h4 {
+    font-size: 0.98rem;
+    color: var(--blue-dark);
+    font-weight: 600;
+    margin: 1.1rem 0 0.4rem;
+  }
+  .section-card p { margin-bottom: 0.9rem; }
+  .section-card ul, .section-card ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  .section-card li { margin-bottom: 0.35rem; }
+
+  .img-block { margin: 1.4rem 0; text-align: center; }
+  .img-block img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .img-block.medium img { max-width: 70%; }
+  .img-block.small img { max-width: 45%; }
+  .img-caption {
+    font-size: 0.87rem;
+    color: #666;
+    font-style: italic;
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+  .img-row {
+    display: flex;
+    gap: 1rem;
+    margin: 1.4rem 0;
+    align-items: flex-start;
+  }
+  .img-row .img-block { flex: 1; margin: 0; }
+
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    border-left: 4px solid;
+  }
+  .callout.info { background: var(--blue-light); border-color: var(--blue-mid); }
+  .callout.tip { background: var(--green-bg); border-color: var(--green); }
+  .callout.warning { background: var(--orange-bg); border-color: var(--orange); }
+  .callout strong {
+    display: block;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .callout.info strong { color: var(--blue-mid); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+
+  .def-table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.93rem; }
+  .def-table th { background: var(--blue-dark); color: white; padding: 0.7rem 0.9rem; text-align: left; font-weight: 600; }
+  .def-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .def-table tr:nth-child(even) td { background: var(--grey-light); }
+  .def-table tr:hover td { background: var(--blue-light); }
+
+  .proj-header {
+    background: var(--blue-light);
+    border-left: 4px solid var(--blue-mid);
+    padding: 0.7rem 1rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1.8rem 0 1rem;
+    font-weight: 600;
+    color: var(--blue-dark);
+  }
+
+  .quiz-section {
+    background: var(--white);
+    border-radius: 12px;
+    border: 2px solid var(--blue-mid);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .quiz-section h2 { font-size: 1.35rem; color: var(--blue-dark); margin-bottom: 0.4rem; }
+  .quiz-section .quiz-intro { color: #666; font-size: 0.93rem; margin-bottom: 1.8rem; }
+
+  .question-block {
+    background: var(--grey-light);
+    border-radius: 8px;
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.2rem;
+  }
+  .question-block p.q-text { font-weight: 600; margin-bottom: 0.8rem; color: var(--blue-dark); }
+  .q-options label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+    transition: background 0.15s;
+  }
+  .q-options label:hover { background: var(--blue-accent); }
+  .q-options input[type="radio"] { margin-top: 0.2rem; accent-color: var(--blue-mid); }
+  .q-feedback {
+    display: none;
+    margin-top: 0.8rem;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font-size: 0.93rem;
+  }
+  .q-feedback.correct { background: var(--green-bg); color: var(--green); border-left: 3px solid var(--green); }
+  .q-feedback.wrong { background: var(--orange-bg); color: var(--orange); border-left: 3px solid var(--orange); }
+  .check-btn {
+    background: var(--blue-mid);
+    color: white;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-top: 0.6rem;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .check-btn:hover { background: var(--blue-dark); }
+
+  .footer-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.5rem;
+    background: var(--white);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+  .footer-nav a {
+    color: var(--blue-mid);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .footer-nav a:hover { color: var(--blue-dark); text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .course-header h1 { font-size: 1.4rem; }
+    .section-card { padding: 1.4rem 1.2rem 1.6rem; }
+    .img-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="course-header">
+    <div class="tag">Muskuloskeletal Ultralyd · Modul 1</div>
+    <h1>Fingre og håndled</h1>
+    <p>Basal anatomi, standardprojektioner og differentialdiagnostiske overvejelser</p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#anatomi-fingre">Basal anatomi — Fingre</a></li>
+      <li><a href="#anatomi-haandled">Basal anatomi — Håndled</a></li>
+      <li><a href="#differentialdiagnoser">Differentialdiagnostiske overvejelser</a></li>
+      <li><a href="#projektioner">Standardprojektioner</a></li>
+      <li><a href="#injektioner">Injektioner</a></li>
+      <li><a href="#quiz">Vidensspørgsmål</a></li>
+    </ol>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEKTION 1: BASAL ANATOMI – FINGRE              -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-card" id="anatomi-fingre">
+    <span class="section-number">Afsnit 1</span>
+    <h2>Basal anatomi — Fingre</h2>
+
+    <h3>Knogler og led</h3>
+    <p>Fingrene består af i alt 14 fingerknogler (phalanges). Digitus II–V har hver tre knogler: phalanx proximalis, phalanx media og phalanx distalis. Digitus I (tommelfingeren) har to knogler: phalanx proximalis og phalanx distalis.</p>
+
+    <p>Alle fingerled er synovialled med relativt stram ledkapsel og stærke kollaterale ligamenter, hvilket giver høj stabilitet trods betydelig bevægelighed:</p>
+
+    <table class="def-table">
+      <thead><tr><th>Led</th><th>Forkortelse</th><th>Funktion</th></tr></thead>
+      <tbody>
+        <tr><td>Metacarpophalangealled</td><td>MCP</td><td>Fleksion/ekstension samt abduktion/adduktion</td></tr>
+        <tr><td>Proksimale interphalangealled</td><td>PIP</td><td>Fleksion/ekstension</td></tr>
+        <tr><td>Distale interphalangealled</td><td>DIP</td><td>Fleksion/ekstension</td></tr>
+      </tbody>
+    </table>
+    <p>Tommelfingeren har ét MCP-led og et IP-led.</p>
+
+    <h3>Stabiliserende strukturer</h3>
+    <ul>
+      <li><strong>Kollaterale ligamenter:</strong> Centrale for lateral stabilitet i alle fingerled.</li>
+      <li><strong>Volarplader:</strong> Fibrøse strukturer, der modvirker hyperekstension, særligt i PIP- og DIP-led.</li>
+    </ul>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image1.png" alt="Fingerled anatomi">
+      <p class="img-caption">Oversigt over fingerled og stabiliserende strukturer.</p>
+    </div>
+
+    <h3>Sener og muskler</h3>
+    <p>Fingerbevægelser styres primært af ekstrinsiske muskler i underarmen via lange sener.</p>
+
+    <h4>Fleksorsener (palmart)</h4>
+    <p>Løber palmart i fibro-osseøse seneskeder og fastholdes tæt til knoglerne af et pulley-system, hvor især <strong>A2- og A4-pulleys</strong> er biomekanisk vigtige. Pulleysystemet forhindrer bowstringing og sikrer effektiv kraftoverførsel.</p>
+    <ul>
+      <li><strong>Flexor digitorum superficialis (FDS)</strong> — flekterer PIP-led</li>
+      <li><strong>Flexor digitorum profundus (FDP)</strong> — flekterer DIP-led</li>
+    </ul>
+
+    <h4>Ekstensorsener (dorsalt)</h4>
+    <p>Løber superficielt dorsalt over phalanges og indgår i ekstensorapparatet, som muliggør ekstension i MCP-, PIP- og DIP-led. Der er ingen seneskeder omkring ekstensorsenerne i deres forløb på fingrene.</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image2.png" alt="Fleksorsener">
+        <p class="img-caption">Fleksorsener og pulley-system (palmart).</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image3.png" alt="Ekstensorsener">
+        <p class="img-caption">Ekstensorapparat (dorsalt).</p>
+      </div>
+    </div>
+
+    <div class="callout warning">
+      <strong>⚠ Vigtige ultralydspointer — Fingre</strong>
+      <ul>
+        <li>Synovit vurderes nemmest <strong>dorsalt</strong> i MCP-leddene.</li>
+        <li>Mindre væskemængde volart ved MCP-leddets proksimale kapselomslag kan være fysiologisk.</li>
+        <li>Let kompression med transduceren kan eliminere små effusioner og give <strong>falsk negative fund</strong> — undgå for hårdt tryk.</li>
+        <li>Ved palmare fleksorsener kan transversal scanning give artefakter, som kan ligne tenosynovit. Patologisk væske skal kunne påvises <strong>både longitudinelt og transversalt</strong>.</li>
+        <li>Doppleraktivitet i DIP-led kan stamme fra <strong>neglematrix</strong> og må ikke fejltolkes som artrit.</li>
+        <li>Pulley-systemet kan fremstå som hyperekkogene strukturer og må ikke forveksles med patologiske forandringer.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEKTION 2: BASAL ANATOMI – HÅNDLED             -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-card" id="anatomi-haandled">
+    <span class="section-number">Afsnit 2</span>
+    <h2>Basal anatomi — Håndled</h2>
+
+    <p>Håndleddet udgør en kompleks overgang mellem underarm og hånd og består af flere tæt integrerede led, der tilsammen muliggør stor bevægelighed kombineret med præcision og stabilitet. Regionen er rig på synovium og seneskeder og er derfor hyppigt involveret ved inflammatoriske reumatiske sygdomme.</p>
+
+    <h3>Knogler</h3>
+    <ul>
+      <li><strong>Underarm:</strong> Radius (udgør den største ossøse del) og Ulna (indgår indirekte via TFCC)</li>
+      <li><strong>Proksimal karpalrække:</strong> scaphoideum, lunatum, triquetrum, pisiforme</li>
+      <li><strong>Distal karpalrække:</strong> trapezium, trapezoideum, capitatum, hamatum</li>
+      <li><strong>Metacarpus:</strong> Fem metakarpalknogler</li>
+    </ul>
+
+    <h3>Led og ledkomplekser</h3>
+
+    <table class="def-table">
+      <thead><tr><th>Led</th><th>Beskrivelse</th></tr></thead>
+      <tbody>
+        <tr><td>Radiokarpalleddet</td><td>Led mellem radius og den proksimale karpalrække. Den dorsale synoviale recess er mest sensitiv ved ultralydsvurdering af synovit og effusion.</td></tr>
+        <tr><td>Interkarpalleddene</td><td>Led mellem håndrodsknoglerne. Effusion i synoviale recesser kan ofte påvises tydeligt.</td></tr>
+        <tr><td>Distale radioulnarled</td><td>Led mellem radius og ulna — muliggør pronation og supination.</td></tr>
+        <tr><td>TFCC</td><td>Triangular Fibrocartilage Complex — stabiliserer den ulnare side af håndleddet. Ikke fuldt visualiserbart ved ultralyd, men væske og fortykkelse i den ulnare recess kan indikere patologi.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout info">
+      <strong>ℹ Klinisk note — TFCC</strong>
+      TFCC belastes ved både pronation/supination og vægtbæring og kan give dybe ulnare smerter uden udtalt synovit. Ledkapslen er relativt tynd og eftergivelig, hvilket øger ultralydens sensitivitet for påvisning af synovit.
+    </div>
+
+    <h3>Sener og kulisser</h3>
+
+    <h4>Ekstensorsener (dorsalt) — 6 kulisser</h4>
+    <p>Ekstensorsenerne løber dorsalt i seks osteofibrøse kulisser, adskilt af septae og fastholdt af extensorretinaklet:</p>
+
+    <table class="def-table">
+      <thead><tr><th>Kulisse</th><th>Sener</th></tr></thead>
+      <tbody>
+        <tr><td>1 (De Quervain)</td><td>m. abductor pollicis longus (APL), m. extensor pollicis brevis (EPB)</td></tr>
+        <tr><td>2</td><td>m. extensor carpi radialis longus (ECRL), m. extensor carpi radialis brevis (ECRB)</td></tr>
+        <tr><td>3</td><td>m. extensor pollicis longus (EPL)</td></tr>
+        <tr><td>4</td><td>m. extensor digitorum (EDC), m. extensor indicis (EIP)</td></tr>
+        <tr><td>5</td><td>m. extensor digiti minimi (EDM)</td></tr>
+        <tr><td>6</td><td>m. extensor carpi ulnaris (ECU)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image4.png" alt="Dorsale kulisser oversigt">
+        <p class="img-caption">Oversigt over de seks dorsale kulisser.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image5.png" alt="Extensorretinaklet">
+        <p class="img-caption">Extensorretinaklet og kulissefordeling.</p>
+      </div>
+    </div>
+
+    <h4>Fleksorsener (palmart)</h4>
+    <p>Løber palmart gennem karpaltunnelen under fleksorretinaklet sammen med n. medianus. De synoviale seneskeder er hyppigt afficeret ved inflammatorisk sygdom og kan give sekundær nervekompression.</p>
+
+    <h3>Nerver</h3>
+    <ul>
+      <li><strong>N. medianus</strong> — karpaltunnelen</li>
+      <li><strong>N. ulnaris</strong> — Guyons kanal</li>
+      <li><strong>N. radialis</strong> — dorsoradialt (overfladisk gren)</li>
+    </ul>
+
+    <div class="callout warning">
+      <strong>⚠ Vigtige ultralydspointer — Håndled</strong>
+      <ul>
+        <li>Der ses hyppigt både <strong>synovit og tenosynovit</strong> ved inflammatorisk sygdom.</li>
+        <li>Extensorretinaklet må ikke forveksles med fortykket seneskede ved tenosynovit.</li>
+        <li>Kulisse 1-tenosynovit (De Quervain) er hyppig ved både overbelastning og inflammatorisk sygdom. Klinisk ses positiv Finkelsteins test.</li>
+        <li><strong>Listers tuberkel</strong> er et vigtigt anatomisk landemærke ved orientering: Ligger mellem 2. og 3. kulisse.</li>
+        <li>Ved tvivl om den korrekte sene er identificeret: Anvend <strong>aktiv fingerbevægelse under scanning</strong>.</li>
+        <li>N. medianus kan fremstå fortykket proksimalt for fleksorretinaklet pga. hæmmet axonal transport og ødem.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEKTION 3: DIFFERENTIALDIAGNOSER               -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-card" id="differentialdiagnoser">
+    <span class="section-number">Afsnit 3</span>
+    <h2>Differentialdiagnostiske overvejelser</h2>
+
+    <h3>Fingre</h3>
+    <table class="def-table">
+      <thead><tr><th>Ultralydsmæssige fund</th><th>Overvej følgende differentialdiagnoser</th></tr></thead>
+      <tbody>
+        <tr><td>Synovit</td><td>Reumatoid artrit, psoriasisartrit, krystalartrit (urinsyregigt/CPPD), septisk artrit, anden artrittilstand</td></tr>
+        <tr><td>Erosioner</td><td>Langvarig/ubehandlet: Reumatoid artrit, psoriasisartrit, anden artrittilstand</td></tr>
+        <tr><td>Osteofytter</td><td>Artrose, CPPD. Ved artrose i MCP overvej hæmokromatose</td></tr>
+        <tr><td>Tenosynovit (fleksor/ekstensor)</td><td>Reumatoid artrit, psoriasisartrit, overbelastning</td></tr>
+        <tr><td>Daktylitisk mønster (synovit + tenosynovit + subkutant ødem)</td><td>Psoriasisartrit</td></tr>
+        <tr><td>Tophi</td><td>Urinsyregigt</td></tr>
+        <tr><td>Manglende Doppleraktivitet trods hævelse ved led</td><td>Kronisk synovial hypertrofi, artrose, mekanisk overbelastning, forkert indstillet Doppler, for hård probeapplikation</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Håndled</h3>
+    <table class="def-table">
+      <thead><tr><th>Ultralydsmæssige fund</th><th>Overvej følgende differentialdiagnoser</th></tr></thead>
+      <tbody>
+        <tr><td>Synovit i radiokarpal-/interkarpalled</td><td>Reumatoid artrit, psoriasisartrit, krystalartrit (urinsyregigt/CPPD), septisk artrit, anden artrittilstand</td></tr>
+        <tr><td>Erosioner</td><td>Langvarig/ubehandlet: Reumatoid artrit, psoriasisartrit, anden artrittilstand</td></tr>
+        <tr><td>Kalcifikation i TFCC</td><td>CPPD</td></tr>
+        <tr><td>Osteofytter</td><td>Artrose, CPPD</td></tr>
+        <tr><td>Tenosynovit (ekstensor/fleksor)</td><td>Reumatoid artrit, psoriasisartrit, overbelastning</td></tr>
+        <tr><td>Medianuskompression / fortykket nerve</td><td>Karpaltunnelsyndrom (kan være sekundært til synovit / synovial hypertrofi)</td></tr>
+        <tr><td>Manglende Doppleraktivitet trods hævelse ved led</td><td>Kronisk synovial hypertrofi, artrose, mekanisk overbelastning, forkert indstillet Doppler, for hård probeapplikation</td></tr>
+        <tr><td>Velafgrænset cystisk struktur</td><td>Ganglion</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:0.85rem; color:#666; margin-top:0.5rem;">CPPD: calcium-pyrophosphate-dihydrat (pyrofosfatgigt).</p>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEKTION 4: STANDARDPROJEKTIONER                -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-card" id="projektioner">
+    <span class="section-number">Afsnit 4</span>
+    <h2>Standardprojektioner</h2>
+
+    <div class="callout info">
+      <strong>ℹ Kursusfokus</strong>
+      I dette kursus tages der udgangspunkt i standardprojektionerne 1, 2 og 5. Fuld oversigt: 1) Håndled dorsalt longitudinelt · 2) Håndled dorsalt transversalt · 3) Håndled volart longitudinelt · 4) Håndled volart transversalt · 5) Fingre dorsalt longitudinelt · 6) Fingre dorsalt transversalt · 7) Fingre volart longitudinelt · 8) Fingre og led volart transversalt.
+    </div>
+
+    <!-- PROJEKTION 1 -->
+    <div class="proj-header">Projektion 1: Håndled, dorsalt, longitudinelt</div>
+    <p>Den proksimale del af transduceren placeres over den distale radius (1). Herved visualiseres ledspalten (2) samt den proksimale karpalrække (4). Ekstensorsenerne ses superficielt dorsalt (3).</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image6.png" alt="Projektion 1 radialsiden">
+        <p class="img-caption">Billede 1: Radialsiden</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image7.png" alt="Projektion 1 midtlinjen">
+        <p class="img-caption">Billede 2: Midtlinjen</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image8.png" alt="Projektion 1 ulnarsiden">
+        <p class="img-caption">Billede 3: Ulnarsiden</p>
+      </div>
+    </div>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image9.png" alt="Projektion 1 annoteret">
+        <p class="img-caption">Annoteret: Radius (1), ledspalte (2), ekstensorsener (3), karpalrække (4).</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image10.png" alt="Projektion 1 transducerplacering">
+        <p class="img-caption">Transducerplacering ved dorsal longitudinel scanning.</p>
+      </div>
+    </div>
+
+    <!-- PROJEKTION 2 -->
+    <div class="proj-header">Projektion 2: Håndled, dorsalt, transversalt — de seks dorsale kulisser</div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image11.png" alt="Kulisse 1 klinisk">
+        <p class="img-caption">1. dorsale kulisse — transducerplacering</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image12.png" alt="Kulisse 1 ultralyd">
+        <p class="img-caption">1. kulisse: m. abductor pollicis longus (1), m. extensor pollicis brevis (2). A. radialis (3). Radius (4).</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image13.png" alt="Kulisse 2 klinisk">
+        <p class="img-caption">2. dorsale kulisse — transducerplacering</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image14.png" alt="Kulisse 2 ultralyd">
+        <p class="img-caption">2. kulisse: m. extensor carpi radialis brevis (1), m. extensor carpi radialis longus (2). Radius (3).</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image15.png" alt="Kulisse 3 klinisk">
+        <p class="img-caption">3. dorsale kulisse — transducerplacering</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image16.png" alt="Kulisse 3 ultralyd">
+        <p class="img-caption">3. kulisse: m. extensor pollicis longus (1). Listers tuberkel (2) — vigtigt anatomisk landemærke. Radius (3).</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image17.png" alt="Kulisse 4 klinisk">
+        <p class="img-caption">4. dorsale kulisse — transducerplacering</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image18.png" alt="Kulisse 4 ultralyd">
+        <p class="img-caption">4. kulisse: m. extensor digitorum communis (1) og m. extensor indicis. Radius (2).</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image19.png" alt="Kulisse 5 klinisk">
+        <p class="img-caption">5. dorsale kulisse — transducerplacering</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image20.png" alt="Kulisse 5 ultralyd">
+        <p class="img-caption">5. kulisse: m. extensor digiti minimi (1).</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image21.png" alt="Kulisse 6 klinisk">
+        <p class="img-caption">6. dorsale kulisse — transducerplacering</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image22.png" alt="Kulisse 6 ultralyd">
+        <p class="img-caption">6. kulisse: m. extensor carpi ulnaris (1). Ulna (2).</p>
+      </div>
+    </div>
+
+    <!-- PROJEKTION 5 -->
+    <div class="proj-header">Projektion 5: Fingre, dorsalt, longitudinelt</div>
+    <p>Longitudinel dorsal scanning af MCP-, PIP- og DIP-led.</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image23.png" alt="MCP-led">
+        <p class="img-caption"><strong>Billede 1: MCP-led.</strong> Transduceren placeres over den proksimale del af phalanx proximalis. Metakarpalhovedet (1) kan visualiseres ved dynamisk scanning. Hyperekkogent bløddelsvæv i ledspalten (2) indikerer fravær af ledvæske.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image24.png" alt="PIP-led">
+        <p class="img-caption"><strong>Billede 2: PIP-led.</strong> Ved distal forskydning af transduceren visualiseres PIP-leddet mellem phalanx proximalis (3) og phalanx media (4).</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image25.png" alt="DIP-led">
+        <p class="img-caption"><strong>Billede 3: DIP-led.</strong> Ved yderligere distal forskydning visualiseres DIP-leddet mellem phalanx media (4) og phalanx distalis (5).</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image26.png" alt="DIP-led Doppler">
+        <p class="img-caption"><strong>Billede 4: DIP-led.</strong> Viser Doppleraktivitet fra neglematrix — må ikke fejltolkes som artrit.</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Ekstra: CMC-led</div>
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image27.png" alt="CMC-led">
+      <p class="img-caption">Transduceren placeres longitudinelt over basis af metakarpalknoglen med fokus på CMC-leddet. A. radialis ses superficielt (1). Ledspalten identificeres mellem karpalknoglen (3) og metakarpalknoglen (4).</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEKTION 5: INJEKTIONER                         -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="section-card" id="injektioner">
+    <span class="section-number">Afsnit 5</span>
+    <h2>Injektioner</h2>
+
+    <div class="proj-header">Injektion i håndleddet</div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image28.png" alt="Injektion håndled 1">
+        <p class="img-caption">Transducerplacering ved ultralydsvejledt injektion i håndleddet.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image29.png" alt="Injektion håndled 2">
+        <p class="img-caption">Nålens indgang og retning ved dorsal tilgang.</p>
+      </div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image30.png" alt="Injektion håndled 3">
+        <p class="img-caption">Ultralydsbillede under injektion.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image31.png" alt="Injektion håndled 4">
+        <p class="img-caption">Verificering af korrekt nålplacering i ledspalten.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- SEKTION 6: QUIZ                                -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="quiz-section" id="quiz">
+    <h2>Vidensspørgsmål</h2>
+    <p class="quiz-intro">Test din viden om fingre og håndled. Vælg det bedste svar for hvert spørgsmål.</p>
+
+    <!-- FINGRE -->
+    <h3 style="color:var(--blue-dark); margin-bottom:1rem;">Fingre</h3>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul1/image32.png" alt="Identifikation af normal anatomi — fingre">
+      <p class="img-caption">Identifikation af normal anatomi: Beskriv hvad du ser på dette ultralydsbillede.</p>
+    </div>
+
+    <!-- Q1 -->
+    <div class="question-block">
+      <p class="q-text">1. Hvor vurderes synovit nemmest i MCP-leddene ved ultralyd?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q1" value="a"> Dorsalt</label>
+        <label><input type="radio" name="q1" value="b"> Volart</label>
+        <label><input type="radio" name="q1" value="c"> Lateralt i kollateralrummet</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q1','a','Korrekt! Synovit vurderes nemmest dorsalt i MCP-leddene ved ultralyd.','Ikke korrekt. Synovit vurderes nemmest dorsalt i MCP-leddene.')">Tjek svar</button>
+      <div class="q-feedback" id="q1-fb"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block">
+      <p class="q-text">2. Hvilke(t) udsagn er korrekte ved ultralyd af fingrene?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q2" value="a"> Let kompression med transduceren kan eliminere små effusioner og giver falsk negative fund</label>
+        <label><input type="radio" name="q2" value="b"> Mindre væskemængde volart ved MCP-leddets proksimale kapselomslag kan være fysiologisk</label>
+        <label><input type="radio" name="q2" value="c"> Øget Dopplersignal i DIP-led er altid patologisk</label>
+        <label><input type="radio" name="q2" value="d"> Synovit ses bedst volart</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q2','a','Korrekt! For hårdt tryk med transduceren kan komprimere små effusioner og give falsk negative fund. Desuden kan mindre væskemængde volart ved MCP-leddets proksimale kapselomslag være fysiologisk.','Ikke korrekt. Let kompression kan eliminere små effusioner — undgå for hårdt tryk. Dopplersignal i DIP kan stamme fra neglematrix og er ikke altid patologisk.')">Tjek svar</button>
+      <div class="q-feedback" id="q2-fb"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block">
+      <p class="q-text">3. Ved daktylitisk hævelse af en finger — hvilket ultralydsmønster forventes?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q3" value="a"> Isoleret DIP-ledsynovit</label>
+        <label><input type="radio" name="q3" value="b"> Kun periostal fortykkelse</label>
+        <label><input type="radio" name="q3" value="c"> Manglende Doppleraktivitet</label>
+        <label><input type="radio" name="q3" value="d"> Kombination af synovit, tenosynovit og subkutant ødem</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q3','d','Korrekt! Daktylitis (pølsefinger) ses typisk ved psoriasisartrit og giver et kombineret mønster med synovit, tenosynovit og subkutant ødem.','Ikke korrekt. Daktylitis giver et kombineret mønster med synovit, tenosynovit og subkutant ødem — typisk ved psoriasisartrit.')">Tjek svar</button>
+      <div class="q-feedback" id="q3-fb"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block">
+      <p class="q-text">4. Hvilket ultralydsfund taler mest for aktiv inflammatorisk synovit?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q4" value="a"> Anekkoisk væske uden Doppler</label>
+        <label><input type="radio" name="q4" value="b"> Osteofytter uden synovial hypertrofi</label>
+        <label><input type="radio" name="q4" value="c"> Fortykket hypoekkoisk synovium med Doppleraktivitet</label>
+        <label><input type="radio" name="q4" value="d"> Fortykket volarplade</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q4','c','Korrekt! Fortykket hypoekkoisk synovium med Doppleraktivitet (power Doppler) er det stærkeste tegn på aktiv inflammatorisk synovit.','Ikke korrekt. Fortykket hypoekkoisk synovium med Doppleraktivitet er det stærkeste tegn på aktiv synovit.')">Tjek svar</button>
+      <div class="q-feedback" id="q4-fb"></div>
+    </div>
+
+    <!-- HÅNDLED -->
+    <h3 style="color:var(--blue-dark); margin: 1.5rem 0 1rem;">Håndled</h3>
+
+    <div class="callout info">
+      <strong>ℹ Identifikation af normal anatomi</strong>
+      Studer nedenstående ultralydsbilleder og identificer de anatomiske strukturer inden du besvarer spørgsmålene.
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block">
+      <p class="q-text">5. Listers tuberkel identificeres ultralydsmæssigt mellem hvilke kulisser?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q5" value="a"> Mellem 1. og 2. kulisse</label>
+        <label><input type="radio" name="q5" value="b"> Mellem 2. og 3. kulisse</label>
+        <label><input type="radio" name="q5" value="c"> Mellem 3. og 4. kulisse</label>
+        <label><input type="radio" name="q5" value="d"> Mellem 5. og 6. kulisse</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q5','b','Korrekt! Listers tuberkel ligger mellem 2. og 3. dorsale kulisse og er et vigtigt anatomisk landemærke ved orientering af håndleddet dorsalt.','Ikke korrekt. Listers tuberkel ligger mellem 2. og 3. dorsale kulisse.')">Tjek svar</button>
+      <div class="q-feedback" id="q5-fb"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block">
+      <p class="q-text">6. Ved tvivl om korrekt seneidentifikation under ultralyd af håndleddet — hvad er korrekt?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q6" value="a"> Øge transducer-trykket for bedre visualisering</label>
+        <label><input type="radio" name="q6" value="b"> Bruge Doppler som primær metode</label>
+        <label><input type="radio" name="q6" value="c"> Anvende aktive fingerbevægelser under scanning</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q6','c','Korrekt! Aktive fingerbevægelser under scanning er den bedste metode til at identificere og bekræfte hvilken sene man ser.','Ikke korrekt. Aktive fingerbevægelser under scanning er den anbefalede metode til sikker seneidentifikation.')">Tjek svar</button>
+      <div class="q-feedback" id="q6-fb"></div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="question-block">
+      <p class="q-text">7. Hvilket ultralydsfund kan tale for CPPD i håndleddet?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q7" value="a"> Kalcifikation i TFCC</label>
+        <label><input type="radio" name="q7" value="b"> Fortykket medianusnerve</label>
+        <label><input type="radio" name="q7" value="c"> Hypoekkoisk ekstensorsene</label>
+        <label><input type="radio" name="q7" value="d"> Isoleret dorsal ganglion</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q7','a','Korrekt! Kalcifikation i TFCC er et karakteristisk ultralydsfund ved CPPD (calcium-pyrophosphate-dihydrat/pyrofosfatgigt) i håndleddet.','Ikke korrekt. Kalcifikation i TFCC er et karakteristisk fund ved CPPD i håndleddet.')">Tjek svar</button>
+      <div class="q-feedback" id="q7-fb"></div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER NAV -->
+  <div class="footer-nav">
+    <a href="del1_injektioner.html">← Del 1: Injektioner</a>
+    <span style="color:#999; font-size:0.9rem;">Modul 1 af 4</span>
+    <a href="modul2_albue_skulder.html">Modul 2: Albue og skulder →</a>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+    document.getElementById('progress-bar').style.width = (scrolled * 100) + '%';
+  });
+
+  // Quiz checker
+  function checkQ(name, correct, okMsg, wrongMsg) {
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    const fb  = document.getElementById(`${name}-fb`);
+    if (!sel) { alert('Vælg venligst et svar.'); return; }
+    fb.style.display = 'block';
+    if (sel.value === correct) {
+      fb.className = 'q-feedback correct';
+      fb.textContent = '✓ ' + okMsg;
+    } else {
+      fb.className = 'q-feedback wrong';
+      fb.textContent = '✗ ' + wrongMsg;
+    }
+  }
+</script>
+</body>
+</html>
