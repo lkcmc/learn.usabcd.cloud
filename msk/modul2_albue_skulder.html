@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 2 – Albue og skulder</title>
+<style>
+  :root {
+    --blue-dark:  #1F497D;
+    --blue-mid:   #2E75B6;
+    --blue-light: #EEF4FB;
+    --blue-accent:#BDD7EE;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --grey-text:  #333;
+    --grey-light: #F5F7FA;
+    --border:     #D0DFF0;
+    --white:      #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; line-height: 1.7; color: var(--grey-text); background: #F0F4F9; }
+  #progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: var(--blue-mid); z-index: 1000; transition: width 0.2s ease; }
+  .page-wrapper { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .course-header { background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%); color: white; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+  .course-header .tag { display: inline-block; background: rgba(255,255,255,0.2); color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .course-header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .course-header p { opacity: 0.88; font-size: 1rem; }
+  .toc { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem 1.8rem; margin-bottom: 2.5rem; }
+  .toc h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-mid); margin-bottom: 0.8rem; }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--blue-dark); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { text-decoration: underline; color: var(--blue-mid); }
+  .module-divider { background: linear-gradient(135deg, #1a3a5c 0%, var(--blue-dark) 100%); color: white; padding: 1.2rem 1.8rem; border-radius: 10px; margin: 2.5rem 0 1.5rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.04em; }
+  .section-card { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 2rem 2rem 2.2rem; margin-bottom: 2rem; scroll-margin-top: 1.5rem; }
+  .section-number { display: inline-block; background: var(--blue-mid); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.7rem; border-radius: 20px; margin-bottom: 0.6rem; }
+  .section-card h2 { font-size: 1.45rem; color: var(--blue-dark); font-weight: 700; margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--blue-accent); }
+  .section-card h3 { font-size: 1.1rem; color: var(--blue-mid); font-weight: 600; margin: 1.5rem 0 0.6rem; }
+  .section-card h4 { font-size: 0.98rem; color: var(--blue-dark); font-weight: 600; margin: 1.1rem 0 0.4rem; }
+  .section-card p { margin-bottom: 0.9rem; }
+  .section-card ul, .section-card ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  .section-card li { margin-bottom: 0.35rem; }
+  .img-block { margin: 1.4rem 0; text-align: center; }
+  .img-block img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .img-block.medium img { max-width: 70%; }
+  .img-block.small img { max-width: 45%; }
+  .img-caption { font-size: 0.87rem; color: #666; font-style: italic; margin-top: 0.5rem; line-height: 1.5; }
+  .img-row { display: flex; gap: 1rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row .img-block { flex: 1; margin: 0; }
+  .img-row-3 { display: flex; gap: 0.8rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row-3 .img-block { flex: 1; margin: 0; }
+  .callout { border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0; border-left: 4px solid; }
+  .callout.info { background: var(--blue-light); border-color: var(--blue-mid); }
+  .callout.tip { background: var(--green-bg); border-color: var(--green); }
+  .callout.warning { background: var(--orange-bg); border-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .callout.info strong { color: var(--blue-mid); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+  .def-table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.93rem; }
+  .def-table th { background: var(--blue-dark); color: white; padding: 0.7rem 0.9rem; text-align: left; font-weight: 600; }
+  .def-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .def-table tr:nth-child(even) td { background: var(--grey-light); }
+  .def-table tr:hover td { background: var(--blue-light); }
+  .proj-header { background: var(--blue-light); border-left: 4px solid var(--blue-mid); padding: 0.7rem 1rem; border-radius: 0 8px 8px 0; margin: 1.8rem 0 1rem; font-weight: 600; color: var(--blue-dark); }
+  .quiz-section { background: var(--white); border-radius: 12px; border: 2px solid var(--blue-mid); padding: 2rem; margin-bottom: 2rem; }
+  .quiz-section h2 { font-size: 1.35rem; color: var(--blue-dark); margin-bottom: 0.4rem; }
+  .quiz-section .quiz-intro { color: #666; font-size: 0.93rem; margin-bottom: 1.8rem; }
+  .question-block { background: var(--grey-light); border-radius: 8px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+  .question-block p.q-text { font-weight: 600; margin-bottom: 0.8rem; color: var(--blue-dark); }
+  .q-options label { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0.7rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.3rem; font-size: 0.95rem; transition: background 0.15s; }
+  .q-options label:hover { background: var(--blue-accent); }
+  .q-options input[type="radio"] { margin-top: 0.2rem; accent-color: var(--blue-mid); }
+  .q-feedback { display: none; margin-top: 0.8rem; padding: 0.7rem 1rem; border-radius: 6px; font-size: 0.93rem; }
+  .q-feedback.correct { background: var(--green-bg); color: var(--green); border-left: 3px solid var(--green); }
+  .q-feedback.wrong { background: var(--orange-bg); color: var(--orange); border-left: 3px solid var(--orange); }
+  .check-btn { background: var(--blue-mid); color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer; margin-top: 0.6rem; font-weight: 600; transition: background 0.15s; }
+  .check-btn:hover { background: var(--blue-dark); }
+  .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.5rem; background: var(--white); border-radius: 10px; border: 1px solid var(--border); margin-top: 1rem; }
+  .footer-nav a { color: var(--blue-mid); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  .footer-nav a:hover { color: var(--blue-dark); text-decoration: underline; }
+  @media (max-width: 600px) { .course-header h1 { font-size: 1.4rem; } .section-card { padding: 1.4rem 1.2rem 1.6rem; } .img-row, .img-row-3 { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="page-wrapper">
+
+  <div class="course-header">
+    <div class="tag">Muskuloskeletal Ultralyd · Modul 2</div>
+    <h1>Albue og skulder</h1>
+    <p>Basal anatomi, standardprojektioner og differentialdiagnostiske overvejelser</p>
+  </div>
+
+  <div class="toc">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#albue-anatomi">Albue — Basal anatomi</a></li>
+      <li><a href="#albue-diffdiag">Albue — Differentialdiagnoser</a></li>
+      <li><a href="#albue-projektioner">Albue — Standardprojektioner</a></li>
+      <li><a href="#albue-injektioner">Albue — Injektioner</a></li>
+      <li><a href="#skulder-anatomi">Skulder — Basal anatomi</a></li>
+      <li><a href="#skulder-diffdiag">Skulder — Differentialdiagnoser</a></li>
+      <li><a href="#skulder-projektioner">Skulder — Standardprojektioner</a></li>
+      <li><a href="#skulder-injektioner">Skulder — Injektioner</a></li>
+      <li><a href="#quiz">Vidensspørgsmål</a></li>
+    </ol>
+  </div>
+
+  <!-- ═══════════ ALBUE ═══════════ -->
+  <div class="module-divider">Del A: Albue</div>
+
+  <!-- ALBUE ANATOMI -->
+  <div class="section-card" id="albue-anatomi">
+    <span class="section-number">Afsnit 1</span>
+    <h2>Albue — Basal anatomi</h2>
+    <p>Albuen er et stabilt, men funktionelt komplekst led mellem humerus, ulna og radius, som tillader fleksion/ekstension samt pronation/supination af underarmen. Ledkomplekset består af tre funktionelle led, der deler én fælles ledkapsel — hvilket har betydning for udbredelse af synovial patologi.</p>
+
+    <h3>Knogler og led</h3>
+    <table class="def-table">
+      <thead><tr><th>Led</th><th>Knogler</th><th>Funktion</th></tr></thead>
+      <tbody>
+        <tr><td>Humeroulnarleddet</td><td>Trochlea humeri + incisura trochlearis ulnae</td><td>Fleksion og ekstension (hængselled)</td></tr>
+        <tr><td>Humeroradialleddet</td><td>Capitulum humeri + caput radii</td><td>Fleksion/ekstension + rotation</td></tr>
+        <tr><td>Proksimale radioulnarled</td><td>Radius + ulna</td><td>Pronation og supination</td></tr>
+      </tbody>
+    </table>
+    <p>De tre led deler én fælles kapsel, hvorfor intraartikulær synovit ofte involverer hele albueleddet.</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image1.png" alt="Albue anatomi lateral">
+        <p class="img-caption">Albueleddets anatomi — lateral oversigt med de tre ledkomponenter.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image2.png" alt="Albue anatomi medial">
+        <p class="img-caption">Albueleddets anatomi — medial oversigt med ligamenter og epikondyler.</p>
+      </div>
+    </div>
+
+    <h3>Ledkapsel og ligamenter</h3>
+    <p>Ledkapslen er relativt rummelig og beklædt med synovium. Stabiliteten sikres primært af:</p>
+    <ul>
+      <li><strong>Mediale kollaterale ligament (MCL/UCL)</strong> — begrænser valgusbevægelse</li>
+      <li><strong>Laterale kollaterale ligamentkompleks (LCL)</strong> — begrænser varusbevægelse</li>
+    </ul>
+
+    <h3>Muskler og sener</h3>
+    <table class="def-table">
+      <thead><tr><th>Funktion</th><th>Muskler</th></tr></thead>
+      <tbody>
+        <tr><td>Fleksion</td><td>m. biceps brachii, m. brachialis, m. brachioradialis</td></tr>
+        <tr><td>Ekstension</td><td>m. triceps brachii, m. anconeus</td></tr>
+        <tr><td>Lateralt udspring (epicondylus lateralis)</td><td>Ekstensorgruppen — lateral epikondylit ved overbelastning</td></tr>
+        <tr><td>Medialt udspring (epicondylus medialis)</td><td>Fleksor-pronatorgruppen — medial epikondylit ved overbelastning</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Bursa olecrani</h3>
+    <p>Ligger superficielt over olecranon. Særligt udsat for traumer, infektion og urinsyreaflejring. Let tilgængelig ved ultralyd.</p>
+
+    <h3>Nerver og kar</h3>
+    <ul>
+      <li><strong>N. ulnaris</strong> — passerer i sulcus ulnaris bag epicondylus medialis; kan komprimeres eller subluksere</li>
+      <li><strong>N. radialis og n. medianus</strong> — passerer anteriort; kan påvirkes sekundært til hævelse</li>
+      <li><strong>A. brachialis</strong> — deler sig i a. radialis og a. ulnaris i fossa cubiti</li>
+    </ul>
+
+    <div class="callout warning">
+      <strong>⚠ Vigtige ultralydspointer — Albue</strong>
+      <ul>
+        <li>Det er afgørende at skelne mellem <strong>intraartikulær patologi</strong>, <strong>periartikulær bursit</strong> og <strong>epikondylær tendinopati</strong>.</li>
+        <li>Intraartikulær effusion lokaliseres typisk i <strong>recessus olecrani</strong> mellem olecranon og humerus.</li>
+        <li>Væske i olecranonbursa er <strong>ekstraartikulær</strong> — ikke at forveksle med intraartikulær effusion.</li>
+        <li>Små effusioner ses ofte bedst ved <strong>fleksion af albuen</strong>, hvor væske forskydes posteriort.</li>
+        <li>Ulnarisneuropati kan opstå sekundært til synovial hypertrofi.</li>
+        <li>Aktiv bevægelse under UL kan anvendes til at skelne mellem sene- og lednær patologi.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ALBUE DIFFDIAG -->
+  <div class="section-card" id="albue-diffdiag">
+    <span class="section-number">Afsnit 2</span>
+    <h2>Albue — Differentialdiagnostiske overvejelser</h2>
+    <table class="def-table">
+      <thead><tr><th>Ultralydsmæssige fund</th><th>Overvej følgende differentialdiagnoser</th></tr></thead>
+      <tbody>
+        <tr><td>Intraartikulær synovit/effusion</td><td>Reumatoid artrit, psoriasisartrit, anden inflammatorisk artrit, septisk artrit, mekanisk overbelastning, artrose</td></tr>
+        <tr><td>Synovit med entesopati</td><td>Psoriasisartrit, spondyloartrit</td></tr>
+        <tr><td>Isoleret olecranonbursit</td><td>Urinsyregigt, traume, infektion</td></tr>
+        <tr><td>Fortykket ekstensorudspring (+/- Doppler)</td><td>Lateral epikondylit</td></tr>
+        <tr><td>Fortykket fleksorudspring (+/- Doppler)</td><td>Medial epikondylit</td></tr>
+        <tr><td>Fortykket tricepssene (+/- Doppler)</td><td>Triceps-tendinopati</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ALBUE PROJEKTIONER -->
+  <div class="section-card" id="albue-projektioner">
+    <span class="section-number">Afsnit 3</span>
+    <h2>Albue — Standardprojektioner</h2>
+
+    <div class="callout info">
+      <strong>ℹ Kursusfokus</strong>
+      I dette kursus er der primært fokus på projektion 3–6, da disse er mest relevante for vurdering af intraartikulær effusion. Projektion 1–2 (anterior) og 7 (cubitaltunnel) ligger uden for kursets rammer.
+    </div>
+
+    <div class="proj-header">Projektion 3: Lateral, longitudinel</div>
+    <p>Transducerens proksimale ende placeres over epicondylus lateralis humeri (1), mens den distale ende orienteres parallelt med underarmens længdeakse. Herved fremstilles udspringet af den fælles ekstensorgruppe (2) i longitudinelt plan. Caput radii identificeres distalt (3).</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image3.png" alt="Projektion 3 klinisk">
+        <p class="img-caption">Transducerplacering — lateral, longitudinel.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image4.png" alt="Projektion 3 ultralyd">
+        <p class="img-caption">Fælles ekstensorudspring (2) fra epicondylus lateralis humeri (1). Caput radii distalt (3).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 4: Medial, longitudinel</div>
+    <p>Transducerens proksimale ende placeres over epicondylus medialis humeri (1), mens den distale ende orienteres parallelt med underarmens længdeakse. Herved fremstilles udspringet af den fælles fleksorgruppe (2) i longitudinelt plan. Fleksorudspringet er kortere end ekstensorudspringet. En mindre mængde fysiologisk væske (3) kan være et normalt fund.</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image5.png" alt="Projektion 4 klinisk">
+        <p class="img-caption">Transducerplacering — medial, longitudinel.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image6.png" alt="Projektion 4 ultralyd">
+        <p class="img-caption">Fælles fleksorudspring (2) fra epicondylus medialis humeri (1). Fysiologisk væske (3).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 5: Posterior, transversal</div>
+    <p>Transduceren placeres i transversalt plan kranialt for olecranon. Olecranonfossa med fedtpuden (1) ses dybt for tricepsmusklen (2) og tricepssenen (3) mellem den mediale (4) og laterale (5) humerale epikondyl. Ved flekteret albue fortrænges ledvæske fra den anteriore del af leddet til olecranonrecessen, hvilket letter påvisning af små effusioner.</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image7.png" alt="Projektion 5 klinisk">
+        <p class="img-caption">Transducerplacering — posterior, transversal.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image8.png" alt="Projektion 5 ultralyd">
+        <p class="img-caption">Olecranonfossa: fedtpude (1), tricepsmuskel (2), tricepssene (3), med. epikondyl (4), lat. epikondyl (5).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 6: Posterior, longitudinel</div>
+    <p>Transducerens distale ende placeres over olecranon (1), mens den proksimale ende orienteres parallelt med overarmens længdeakse. Herved visualiseres tricepsmuskulaturen (2), tricepssenen (3) samt fossa olecrani med fedtpude (4) i longitudinelt plan. Humerus (5). Posteriore ledrecess (6).</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image9.png" alt="Projektion 6 klinisk">
+        <p class="img-caption">Transducerplacering — posterior, longitudinel.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image10.png" alt="Projektion 6 ultralyd">
+        <p class="img-caption">Olecranon (1), tricepsmuskel (2), tricepssene (3), fedtpude i fossa olecrani (4), humerus (5), posteriore ledrecess (6).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALBUE INJEKTIONER -->
+  <div class="section-card" id="albue-injektioner">
+    <span class="section-number">Afsnit 4</span>
+    <h2>Albue — Injektioner</h2>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image11.png" alt="Albue injektion 1">
+        <p class="img-caption">Transducerplacering ved ultralydsvejledt injektion i albueleddet.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image12.png" alt="Albue injektion 2">
+        <p class="img-caption">Ultralydsvejledt injektion — nålens forløb i posteriore tilgang.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SKULDER ═══════════ -->
+  <div class="module-divider">Del B: Skulder</div>
+
+  <!-- SKULDER ANATOMI -->
+  <div class="section-card" id="skulder-anatomi">
+    <span class="section-number">Afsnit 5</span>
+    <h2>Skulder — Basal anatomi</h2>
+    <p>Skulderen er kroppens mest bevægelige ledkompleks og består af flere funktionelle enheder, der tilsammen muliggør et stort bevægelsesudslag. Den høje bevægelighed sker på bekostning af ossøs stabilitet — skulderens stabilitet beror primært på kapsulære, ligamentære og muskulotendinøse strukturer.</p>
+
+    <h3>Led</h3>
+    <table class="def-table">
+      <thead><tr><th>Led</th><th>Beskrivelse</th></tr></thead>
+      <tbody>
+        <tr><td>Glenohumeralleddet (GH)</td><td>Kugleled mellem caput humeri og cavitas glenoidalis. Stor bevægelighed men afhængig af bløddelsstabilitet (kapsel, labrum, rotatorcuff).</td></tr>
+        <tr><td>Akromioklavikularleddet (AC)</td><td>Glideled mellem acromion og clavicula. Hyppigt afficeret ved degenerativ og inflammatorisk sygdom. <strong>Husk altid AC-leddet!</strong></td></tr>
+        <tr><td>Scapulothorakal glideflade</td><td>Funktionel enhed uden egentlig ledkapsel. Afgørende for samlede skulderøvelse.</td></tr>
+        <tr><td>Sternoklavikulærleddet (SC)</td><td>Forbinder clavicula med sternum — bidrager til skulderbæltets samlede bevægelighed.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Muskler og sener — Rotatorcuffen</h3>
+    <p>Rotatorcuffen udgør det vigtigste muskulotendinøse kompleks ved ultralydsundersøgelse af skulderen og er central for dynamisk stabilitet ved at centrere caput humeri i cavitas glenoidale under bevægelse.</p>
+
+    <table class="def-table">
+      <thead><tr><th>Muskel</th><th>Insertion</th><th>Funktion</th><th>Note</th></tr></thead>
+      <tbody>
+        <tr><td>m. supraspinatus</td><td>Tuberculum majus</td><td>Initierer abduktion</td><td>Hyppigste lokalisation for tendinopati og ruptur</td></tr>
+        <tr><td>m. infraspinatus</td><td>Tuberculum majus</td><td>Primært udadrotation</td><td></td></tr>
+        <tr><td>m. teres minor</td><td>Tuberculum majus</td><td>Udadrotation</td><td>Relevant ved degenerative cuff-forandringer</td></tr>
+        <tr><td>m. subscapularis</td><td>Tuberculum minus</td><td>Indadrotation, anterior stabilitet</td><td>Bred, multipennat struktur</td></tr>
+      </tbody>
+    </table>
+
+    <h4>M. biceps brachii, caput longum</h4>
+    <p>Løber intraartikulært og videre i sulcus intertubercularis. Stabiliseres af det transversale humerale ligament og de øvre fibre af subscapularis. Relevante fund: tendinopati, tenosynovit, subluksation, luksation og ruptur.</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image13.png" alt="Rotatorcuff anatomi">
+        <p class="img-caption">Rotatorcuffens fire muskler og deres insertioner på tuberculum majus og minus.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image14.png" alt="Bicepssene sulcus">
+        <p class="img-caption">M. biceps brachii caput longum i sulcus intertubercularis.</p>
+      </div>
+    </div>
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image15.png" alt="Skulder oversigt">
+      <p class="img-caption">Skulderens anatomi i sagitalt plan med GH-led, acromion og bursa subacromialis.</p>
+    </div>
+
+    <h3>Bursa subacromialis/subdeltoidea</h3>
+    <p>Den største bursa i skulderen. Reducerer friktion mellem rotatorcuff, acromion og m. deltoideus. Let tilgængelig ved ultralyd og hyppigt involveret ved bursit, impingement og sekundær reaktiv væske ved rotatorcuff-patologi. Normal bursatykkelse er &lt; 2–3 mm.</p>
+
+    <div class="callout warning">
+      <strong>⚠ Vigtige ultralydspointer — Skulder</strong>
+      <ul>
+        <li>Inflammatoriske artritter involverer ofte både GH- og AC-leddet — <strong>husk altid AC-leddet!</strong></li>
+        <li>Fokus ved UL-scanning: Skelnen effusion vs. fortykket synovium · Seneekkogenicitet og fibrillær kontinuitet · Bursa: fortykkelse, kompressibilitet, hyperæmi · Dynamiske test: impingement og biceps-instabilitet.</li>
+        <li><strong>Doppler er generelt ikke meningsfuldt i supraspinatussenen</strong> pga. træk ved ultrasonisk fremstilling i forceret indadrotation.</li>
+        <li><strong>Anisotropi er hyppig ved bicepssenen</strong> og kan fejltolkes som patologi.</li>
+        <li>Væske i bursa subacromialis ses tydeligst i tværsnit, da ansamlingen ofte erkendes anteriort og/eller posteriort.</li>
+        <li>GH-led-effusion vurderes bedst langs bicepssenen pga. kommunikation med GH-leddet; alternativt i den posteriore recess ved udadrotation.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SKULDER DIFFDIAG -->
+  <div class="section-card" id="skulder-diffdiag">
+    <span class="section-number">Afsnit 6</span>
+    <h2>Skulder — Differentialdiagnostiske overvejelser</h2>
+    <table class="def-table">
+      <thead><tr><th>Ultralydsmæssige fund</th><th>Overvej følgende differentialdiagnoser</th></tr></thead>
+      <tbody>
+        <tr><td>GH-led synovit/effusion</td><td>Reumatoid artrit, psoriasisartrit, krystalartrit (urat/CPPD), anden inflammatorisk artrit, septisk artrit, artrose</td></tr>
+        <tr><td>AC-led synovit</td><td>Psoriasisartrit, reumatoid artrit, artrose</td></tr>
+        <tr><td>Subacromial/subdeltoid bursit</td><td>Rotatorcuff-patologi, inflammatorisk artrit, degeneration</td></tr>
+        <tr><td>Supraspinatus-tendinopati</td><td>Overbelastning, degenerativ sygdom</td></tr>
+        <tr><td>Rotatorcuff-ruptur</td><td>Degenerativ eller traumatisk</td></tr>
+        <tr><td>Biceps-tenosynovit</td><td>Inflammatorisk artrit, overbelastning</td></tr>
+        <tr><td>Kapsulær fortykkelse uden synovit</td><td>Adhæsiv kapsulit</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.85rem; color:#666; margin-top:0.5rem;">CPPD: calcium-pyrophosphate-dihydrat (pyrofosfatgigt).</p>
+  </div>
+
+  <!-- SKULDER PROJEKTIONER -->
+  <div class="section-card" id="skulder-projektioner">
+    <span class="section-number">Afsnit 7</span>
+    <h2>Skulder — Standardprojektioner</h2>
+
+    <div class="callout info">
+      <strong>ℹ Hurtig cuff-screening</strong>
+      Rotatorcuffen kan hurtigt screenes med én transversal dynamisk scanning. Den systematiske undersøgelse gennemgår 9 projektioner som vist nedenfor.
+    </div>
+
+    <div class="proj-header">Projektion 1: Anterior transversal — neutral position</div>
+    <p>Ved transversal scanning med skulderen i neutral position (underarmen hvilende på knæet) identificeres tendo caput longum m. bicipitis (1) i sulcus intertubercularis mellem tuberculum majus (2) og tuberculum minus (3). Tiltes transduceren let kranialt og kaudalt for at undgå anisotropi.</p>
+    <div class="img-row-3">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image16.png" alt="Proj 1 billede 1">
+        <p class="img-caption">Billede 1: Bicepssene i sulcus intertubercularis.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image17.png" alt="Proj 1 billede 2">
+        <p class="img-caption">Billede 2: Distal scanning — bicepsmuskel (6), m. pectoralis major insertion (5).</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image18.png" alt="Proj 1 billede 3">
+        <p class="img-caption">Billede 3: Annoteret — bicepssene (1), tuberculum majus (2), tuberculum minus (3).</p>
+      </div>
+    </div>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image19.png" alt="Proj 1 billede 4">
+        <p class="img-caption">Billede 4: Klinisk foto — transducerplacering anterior, neutral.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image20.png" alt="Proj 1 billede 5">
+        <p class="img-caption">Billede 5: Oversigt over scanningsplan anteriort.</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 2: Anterior longitudinel — neutral position</div>
+    <p>Transduceren roteres til longitudinelt plan i niveau med sulcus intertubercularis og bevæges medialt–lateralt, indtil den proksimale del af den lange bicepssene (1) identificeres. Humerus ses dybt (2). Distalt visualiseres den myotendinøse overgang (5) og bicepsmusklen (3). Deltoideusmusklen ses superficielt (4).</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image21.png" alt="Proj 2 billede 1">
+        <p class="img-caption">Billede 1: Proximal del af bicepssene (1). Humerus dybt (2).</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image22.png" alt="Proj 2 billede 2">
+        <p class="img-caption">Billede 2: Myotendinøs overgang (5). Bicepsmuskel (3). Deltoideus superficielt (4).</p>
+      </div>
+    </div>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image23.png" alt="Proj 2 klinisk">
+        <p class="img-caption">Klinisk foto — transducerplacering anterior longitudinel.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image24.png" alt="Proj 2 annoteret">
+        <p class="img-caption">Annoteret: Bicepssene (1), deltoideus (4), myotendinøs overgang (5).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 3: Anterior transversal — udadrotation</div>
+    <p>Transduceren føres proksimalt fra proj. 1, indtil rotatorcuffen visualiseres. Bicepssenen (1) fungerer som anatomisk landemærke og markerer intervallet mellem supraspinatussenen lateralt (4) og subscapularissenen medialt (2). Ved udadrotation (albuen fikseret ind til siden) optimeres visualisering af subscapularissenen.</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image25.png" alt="Proj 3 billede 1">
+        <p class="img-caption">Billede 1: Bicepssene (1), supraspinatussene lateralt (4), subscapularissene medialt (2), deltoideus (3), caput humeri (5).</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image26.png" alt="Proj 3 billede 2">
+        <p class="img-caption">Billede 2: Subscapularissenen (2) optimeret ved udadrotation. Tuberculum minus (angivet medialt for 1). Deltoideus (3).</p>
+      </div>
+    </div>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image27.png" alt="Proj 3 klinisk">
+        <p class="img-caption">Klinisk foto — skulderen i udadrotation.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image28.png" alt="Proj 3 annoteret">
+        <p class="img-caption">Annoteret oversigt over anterior transversal scanning i udadrotation.</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 4: Anterior longitudinel — udadrotation</div>
+    <p>Subscapularissenen (2) i længdeakse. Den multipennate struktur fremstår tydelig med hypoekkogene muskelfibre mellem de hyperekkogene senefibre (1). Deltoideusmusklen ses superficielt (2). Tuberculum minus humeri identificeres dybt (3). Bicepssenen (4).</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image29.png" alt="Proj 4 klinisk">
+        <p class="img-caption">Klinisk foto — anterior longitudinel, udadrotation.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image30.png" alt="Proj 4 ultralyd">
+        <p class="img-caption">Subscapularissenen i longitudinelt plan. Multipennat struktur (1). Tuberculum minus (3). Bicepssene (4).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 5: Anterior transversal — indadrotation (supraspinatussene)</div>
+    <p>Håndryggen placeres på den modsatte lænderyg (forceret indadrotation). Transduceren roteres ca. 45°. Supraspinatussenen visualiseres transversalt (1) og strækker sig ca. 2 cm lateralt fra bicepssenen (2). Bursa subacromialis/subdeltoidea ses som et tyndt hypoekkogent lag (&lt; 2–3 mm) (5). Caput humeri med ledbrusk ses dybt (4).</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image31.png" alt="Proj 5 klinisk">
+        <p class="img-caption">Klinisk foto — forceret indadrotation med håndryggen på lænden.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image32.png" alt="Proj 5 ultralyd">
+        <p class="img-caption">Supraspinatussene (1), bicepssene som landemærke (2), caput humeri (4), bursa (5).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 6: Anterior longitudinel — indadrotation (supraspinatussene)</div>
+    <p>Håndryggen placeres på den modsatte baglomme (forceret indadrotation). Transduceren roteres ca. 45°. Supraspinatussenen (1) forskydes anteriort for acromion. Deltoideus superficielt (2). Tuberculum majus som lateral knoglekontur (3). Caput humeri dybt (4). Tynd subdeltoid bursa superficielt for senen (5).</p>
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image33.png" alt="Proj 6 ultralyd">
+      <p class="img-caption">Supraspinatussene (1) i longitudinelt plan. Deltoideus (2), tuberculum majus (3), caput humeri (4), bursa (5).</p>
+    </div>
+
+    <div class="proj-header">Projektion 7: Posterior transversal — let indadrotation</div>
+    <p>Infraspinatussenen ses i længdesnit (1) med insertion på tuberculum majus (2). Caput humeri profundt (3). Spina scapulae (4) fungerer som ossøst landmark. Den posteriore glenoidrand (5) afgrænser cavitas glenoidalis. Labrum glenoidale posterius (6) fremstår som en trekantet, ekkogen struktur — integritet kan vurderes dynamisk.</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image34.png" alt="Proj 7 klinisk">
+        <p class="img-caption">Klinisk foto — posterior transversal scanning.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image35.png" alt="Proj 7 ultralyd">
+        <p class="img-caption">Infraspinatussene (1), tuberculum majus (2), caput humeri (3), spina scapulae (4), glenoidrand (5), labrum posterius (6).</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 8: Posterior longitudinel — let indadrotation</div>
+    <p>Ved posterior longitudinel scanning visualiseres infraspinatussenen (1) og teres minor-senen (2) i længdeakse som adskilte senestrukturer omgivet af tilhørende muskulatur.</p>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image36.png" alt="Proj 8 klinisk">
+        <p class="img-caption">Klinisk foto — posterior longitudinel scanning.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image37.png" alt="Proj 8 ultralyd">
+        <p class="img-caption">Infraspinatussene (1) og teres minor-sene (2) i longitudinelt plan.</p>
+      </div>
+    </div>
+
+    <div class="proj-header">Projektion 9: Transversal scanning af AC-leddet</div>
+    <p>Transduceren placeres i transversalt plan på toppen af skulderen. AC-ledspalten (1) visualiseres mellem acromion lateralt (2) og clavicula medialt (3).</p>
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image38.png" alt="Proj 9 AC-led">
+      <p class="img-caption">AC-ledspalten (1) mellem acromion (2) og clavicula (3).</p>
+    </div>
+  </div>
+
+  <!-- SKULDER INJEKTIONER -->
+  <div class="section-card" id="skulder-injektioner">
+    <span class="section-number">Afsnit 8</span>
+    <h2>Skulder — Injektioner</h2>
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image39.png" alt="Skulder injektion 1">
+        <p class="img-caption">Transducerplacering ved ultralydsvejledt injektion i skulderleddet/bursa.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image40.png" alt="Skulder injektion 2">
+        <p class="img-caption">Nålens forløb under ultralydsvejledning ved skulderinjektion.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-section" id="quiz">
+    <h2>Vidensspørgsmål</h2>
+    <p class="quiz-intro">Test din viden om albue og skulder. Vælg det bedste svar for hvert spørgsmål.</p>
+
+    <h3 style="color:var(--blue-dark); margin-bottom:1rem;">Albue</h3>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image41.png" alt="Albue identifikation 1">
+        <p class="img-caption">Identifikation af normal anatomi — beskriv hvad du ser.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image42.png" alt="Albue identifikation 2">
+        <p class="img-caption">Identifikation af normal anatomi — beskriv hvad du ser.</p>
+      </div>
+    </div>
+
+    <div class="question-block">
+      <p class="q-text">1. Fortykket udspring af fleksorsenerne ved albuen (evt. Doppleraktivitet) giver mistanke om?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q1" value="a"> Lateral epikondylit</label>
+        <label><input type="radio" name="q1" value="b"> Medial epikondylit</label>
+        <label><input type="radio" name="q1" value="c"> Reumatoid artrit</label>
+        <label><input type="radio" name="q1" value="d"> Septisk artrit</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q1','b','Korrekt! Fortykket fleksorudspring fra epicondylus medialis med Doppleraktivitet er typisk for medial epikondylit (golfer\'s elbow).','Ikke korrekt. Det er fleksorudspringet fra epicondylus MEDIALIS der er fortykket — dette taler for medial epikondylit.')">Tjek svar</button>
+      <div class="q-feedback" id="q1-fb"></div>
+    </div>
+
+    <div class="question-block">
+      <p class="q-text">2. Hvor dokumenteres intraartikulær effusion bedst ved UL af albuen?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q2" value="a"> I den posteriore recess mellem olecranon og humerus</label>
+        <label><input type="radio" name="q2" value="b"> Over caput radii anteriort</label>
+        <label><input type="radio" name="q2" value="c"> I bicepssenens seneskede</label>
+        <label><input type="radio" name="q2" value="d"> I sulcus ulnaris</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q2','a','Korrekt! Intraartikulær effusion lokaliseres typisk og dokumenteres bedst i den posteriore recess (recessus olecrani) mellem olecranon og humerus — særligt ved flekteret albue.','Ikke korrekt. Den posteriore recess (recessus olecrani) er den bedste lokalisation for dokumentation af intraartikulær effusion i albuen.')">Tjek svar</button>
+      <div class="q-feedback" id="q2-fb"></div>
+    </div>
+
+    <h3 style="color:var(--blue-dark); margin: 1.5rem 0 1rem;">Skulder</h3>
+
+    <div class="img-row-3">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image43.png" alt="Skulder identifikation 1">
+        <p class="img-caption">Identificér strukturer i dette ultralydsbillede.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image44.png" alt="Skulder identifikation 2">
+        <p class="img-caption">Identificér strukturer i dette ultralydsbillede.</p>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul2/image45.png" alt="Skulder identifikation 3">
+        <p class="img-caption">Identificér strukturer i dette ultralydsbillede.</p>
+      </div>
+    </div>
+
+    <div class="question-block">
+      <p class="q-text">3. Ved vurdering af GH-leddet — hvor ses effusion og/eller synovit lettest?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q3" value="a"> I posterior recess</label>
+        <label><input type="radio" name="q3" value="b"> I omslagsfolden omkring bicepssenen</label>
+        <label><input type="radio" name="q3" value="c"> Subacromialt</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q3','b','Korrekt! GH-led-effusion vurderes bedst langs bicepssenen, da bicepsseneskeden kommunikerer med GH-leddet. Alternativt kan effusion ses i den posteriore recess ved udadrotation.','Ikke korrekt. GH-led-effusion ses lettest i omslagsfolden langs bicepssenen pga. kommunikation med GH-leddet.')">Tjek svar</button>
+      <div class="q-feedback" id="q3-fb"></div>
+    </div>
+
+    <div class="question-block">
+      <p class="q-text">4. Hvilket udsagn om supraspinatussenen er korrekt?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q4" value="a"> Doppleraktivitet er altid tegn på inflammation</label>
+        <label><input type="radio" name="q4" value="b"> Senen vurderes bedst i neutral skulderposition</label>
+        <label><input type="radio" name="q4" value="c"> Doppler er ofte vanskelig at tolke pga. træk i senen ved forceret indadrotation</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q4','c','Korrekt! Doppler er generelt ikke meningsfuldt i supraspinatussenen pga. træk ved ultrasonisk fremstilling i forceret indadrotation — dette kan give falsk positiv Doppleraktivitet.','Ikke korrekt. Doppler i supraspinatussenen kan være svær at tolke pga. træk i senen ved forceret indadrotation.')">Tjek svar</button>
+      <div class="q-feedback" id="q4-fb"></div>
+    </div>
+
+    <div class="question-block">
+      <p class="q-text">5. Anteriore skuldersmerter med UL-fund af væske omkring bicepssenen taler mest for:</p>
+      <div class="q-options">
+        <label><input type="radio" name="q5" value="a"> Biceps-tenosynovit</label>
+        <label><input type="radio" name="q5" value="b"> AC-led artrose</label>
+        <label><input type="radio" name="q5" value="c"> Subacromial bursit</label>
+        <label><input type="radio" name="q5" value="d"> Adhæsiv kapsulit</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q5','a','Korrekt! Væske omkring bicepssenen taler mest for biceps-tenosynovit — men husk at væske her også kan afspejle patologi i GH-leddet pga. kommunikation.','Ikke korrekt. Væske omkring bicepssenen taler mest for biceps-tenosynovit, men kan også afspejle GH-led-patologi.')">Tjek svar</button>
+      <div class="q-feedback" id="q5-fb"></div>
+    </div>
+
+    <div class="question-block">
+      <p class="q-text">6. Hvad er korrekt ved vurdering af bicepssenen?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q6" value="a"> Væske omkring bicepssenen skyldes altid patologi i selve senen</label>
+        <label><input type="radio" name="q6" value="b"> Senen vurderes bedst posteriort</label>
+        <label><input type="radio" name="q6" value="c"> Væske omkring senen kan afspejle patologi i GH-leddet</label>
+      </div>
+      <button class="check-btn" onclick="checkQ('q6','c','Korrekt! Bicepsseneskeden kommunikerer med GH-leddet, hvorfor væske her kan afspejle intraartikulær patologi og ikke nødvendigvis primær senepati.','Ikke korrekt. Væske omkring bicepssenen kan skyldes GH-led-patologi pga. kommunikation med bicepsseneskeden.')">Tjek svar</button>
+      <div class="q-feedback" id="q6-fb"></div>
+    </div>
+  </div>
+
+  <div class="footer-nav">
+    <a href="modul1_fingre_haandled.html">← Modul 1: Fingre og håndled</a>
+    <span style="color:#999; font-size:0.9rem;">Modul 2 af 4</span>
+    <a href="modul3_knae_hofte.html">Modul 3: Knæ og hofte →</a>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+    document.getElementById('progress-bar').style.width = (scrolled * 100) + '%';
+  });
+  function checkQ(name, correct, okMsg, wrongMsg) {
+    const sel = document.querySelector(`input[name="${name}"]:checked`);
+    const fb  = document.getElementById(`${name}-fb`);
+    if (!sel) { alert('Vælg venligst et svar.'); return; }
+    fb.style.display = 'block';
+    if (sel.value === correct) {
+      fb.className = 'q-feedback correct';
+      fb.textContent = '✓ ' + okMsg;
+    } else {
+      fb.className = 'q-feedback wrong';
+      fb.textContent = '✗ ' + wrongMsg;
+    }
+  }
+</script>
+</body>
+</html>
