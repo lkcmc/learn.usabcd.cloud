@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 4 – Tæer og ankler</title>
+<style>
+  :root {
+    --blue-dark:  #1F497D;
+    --blue-mid:   #2E75B6;
+    --blue-light: #EEF4FB;
+    --blue-accent:#BDD7EE;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --grey-text:  #333;
+    --grey-light: #F5F7FA;
+    --border:     #D0DFF0;
+    --white:      #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; line-height: 1.7; color: var(--grey-text); background: #F0F4F9; }
+  #progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: var(--blue-mid); z-index: 1000; transition: width 0.2s ease; }
+  .page-wrapper { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .course-header { background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%); color: white; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+  .course-header .tag { display: inline-block; background: rgba(255,255,255,0.2); color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .course-header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .course-header p { opacity: 0.88; font-size: 1rem; }
+  .toc { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem 1.8rem; margin-bottom: 2.5rem; }
+  .toc h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-mid); margin-bottom: 0.8rem; }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--blue-dark); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { text-decoration: underline; color: var(--blue-mid); }
+  .module-divider { background: linear-gradient(135deg, #1a3a5c 0%, var(--blue-dark) 100%); color: white; padding: 1.2rem 1.8rem; border-radius: 10px; margin: 2.5rem 0 1.5rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.04em; }
+  .section-card { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 2rem 2rem 2.2rem; margin-bottom: 2rem; scroll-margin-top: 1.5rem; }
+  .section-number { display: inline-block; background: var(--blue-mid); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.7rem; border-radius: 20px; margin-bottom: 0.6rem; }
+  .section-card h2 { font-size: 1.45rem; color: var(--blue-dark); font-weight: 700; margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--blue-accent); }
+  .section-card h3 { font-size: 1.1rem; color: var(--blue-mid); font-weight: 600; margin: 1.5rem 0 0.6rem; }
+  .section-card h4 { font-size: 0.98rem; color: var(--blue-dark); font-weight: 600; margin: 1.1rem 0 0.4rem; }
+  .section-card p { margin-bottom: 0.9rem; }
+  .section-card ul, .section-card ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  .section-card li { margin-bottom: 0.35rem; }
+  .img-block { margin: 1.4rem 0; text-align: center; }
+  .img-block img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .img-block.medium img { max-width: 70%; }
+  .img-block.small img { max-width: 45%; }
+  .img-caption { font-size: 0.87rem; color: #666; font-style: italic; margin-top: 0.5rem; line-height: 1.5; }
+  .img-row { display: flex; gap: 1rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row .img-block { flex: 1; margin: 0; }
+  .img-row-3 { display: flex; gap: 0.8rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row-3 .img-block { flex: 1; margin: 0; }
+  .callout { border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0; border-left: 4px solid; }
+  .callout.info { background: var(--blue-light); border-color: var(--blue-mid); }
+  .callout.tip { background: var(--green-bg); border-color: var(--green); }
+  .callout.warning { background: var(--orange-bg); border-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .callout.info strong { color: var(--blue-mid); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+  .def-table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.93rem; }
+  .def-table th { background: var(--blue-dark); color: white; padding: 0.7rem 0.9rem; text-align: left; font-weight: 600; }
+  .def-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .def-table tr:nth-child(even) td { background: var(--grey-light); }
+  .def-table tr:hover td { background: var(--blue-light); }
+  .proj-header { background: var(--blue-light); border-left: 4px solid var(--blue-mid); padding: 0.7rem 1rem; border-radius: 0 8px 8px 0; margin: 1.8rem 0 1rem; font-weight: 600; color: var(--blue-dark); }
+  .quiz-section { background: var(--white); border-radius: 12px; border: 2px solid var(--blue-mid); padding: 2rem; margin-bottom: 2rem; }
+  .quiz-section h2 { font-size: 1.35rem; color: var(--blue-dark); margin-bottom: 0.4rem; }
+  .quiz-section .quiz-intro { color: #666; font-size: 0.93rem; margin-bottom: 1.8rem; }
+  .question-block { background: var(--grey-light); border-radius: 8px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+  .question-block p.q-text { font-weight: 600; margin-bottom: 0.8rem; color: var(--blue-dark); }
+  .q-options label { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0.7rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.3rem; font-size: 0.95rem; transition: background 0.15s; }
+  .q-options label:hover { background: var(--blue-accent); }
+  .q-options input[type="radio"] { margin-top: 0.2rem; accent-color: var(--blue-mid); }
+  .q-feedback { display: none; margin-top: 0.8rem; padding: 0.7rem 1rem; border-radius: 6px; font-size: 0.93rem; }
+  .q-feedback.correct { background: var(--green-bg); color: var(--green); border-left: 3px solid var(--green); }
+  .q-feedback.wrong { background: var(--orange-bg); color: var(--orange); border-left: 3px solid var(--orange); }
+  .check-btn { background: var(--blue-mid); color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer; margin-top: 0.6rem; font-weight: 600; transition: background 0.15s; }
+  .check-btn:hover { background: var(--blue-dark); }
+  .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.5rem; background: var(--white); border-radius: 10px; border: 1px solid var(--border); margin-top: 1rem; }
+  .footer-nav a { color: var(--blue-mid); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  .footer-nav a:hover { color: var(--blue-dark); text-decoration: underline; }
+  @media (max-width: 600px) { .course-header h1 { font-size: 1.4rem; } .section-card { padding: 1.4rem 1.2rem 1.6rem; } .img-row, .img-row-3 { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="page-wrapper">
+
+  <div class="course-header">
+    <div class="tag">Muskuloskeletal Ultralyd · Modul 4</div>
+    <h1>Tæer og ankler</h1>
+    <p>Basal anatomi, standardprojektioner og differentialdiagnostiske overvejelser</p>
+  </div>
+
+  <div class="toc">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#taeer-anatomi">Tæer — Basal anatomi</a></li>
+      <li><a href="#taeer-diffdiag">Tæer — Differentialdiagnoser</a></li>
+      <li><a href="#ankel-anatomi">Ankel — Basal anatomi</a></li>
+      <li><a href="#ankel-diffdiag">Ankel — Differentialdiagnoser</a></li>
+      <li><a href="#projektioner">Standardprojektioner og billeder</a></li>
+      <li><a href="#injektioner">Injektioner</a></li>
+      <li><a href="#quiz">Vidensspørgsmål</a></li>
+    </ol>
+  </div>
+
+  <!-- ═══════════ TÆER ═══════════ -->
+  <div class="module-divider">Del A: Tæer</div>
+
+  <!-- TÆER ANATOMI -->
+  <div class="section-card" id="taeer-anatomi">
+    <span class="section-number">Afsnit 1</span>
+    <h2>Tæer — Basal anatomi</h2>
+    <p>Forfoden består af metatarsalia I–V og phalanges og udgør et komplekst, vægtbærende system afgørende for balance, støddæmpning og fremdrift under gang. Regionen udsættes for betydelig mekanisk belastning og er samtidig særligt følsom for både synovial og periartikulær patologi.</p>
+
+    <h3>Knogler</h3>
+    <h4>Phalanges</h4>
+    <ul>
+      <li>I alt 14 tåknogler.</li>
+      <li><strong>Digitus I (storetå):</strong> phalanx proximalis og phalanx distalis.</li>
+      <li><strong>Digiti II–V:</strong> phalanx proximalis, media og distalis.</li>
+    </ul>
+    <h4>Metatarsalia I–V</h4>
+    <ul>
+      <li>Forbinder forfoden med mellemfoden.</li>
+      <li>Fungerer som væsentlige belastningssøjler under gang og afsæt.</li>
+    </ul>
+    <h4>Sesamknogler</h4>
+    <ul>
+      <li>Lokaliseret plantart under caput metatarsale I.</li>
+      <li>Vigtige for kraftoverførsel og biomekanik i afsætsfasen.</li>
+    </ul>
+
+    <h3>Led</h3>
+    <h4>MTP-led (metatarsophalangealled)</h4>
+    <ul>
+      <li>Synovialled mellem metatarsalknoglerne og phalanx proximalis.</li>
+      <li>Relativt rummelig kapsel og betydelig bevægelighed.</li>
+      <li>Centrale led ved inflammatorisk artrit.</li>
+    </ul>
+    <h4>PIP- og DIP-led</h4>
+    <ul>
+      <li>Mindre synovialled mellem phalanges.</li>
+      <li>Mere stabile og med begrænset bevægeudslag.</li>
+    </ul>
+    <h4>IP-led (digitus I)</h4>
+    <ul>
+      <li>Hængselled mellem phalanx proximalis og phalanx distalis.</li>
+    </ul>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image1.png" alt="Tæernes anatomi — oversigt">
+      <div class="img-caption">Forfoden med metatarsalia, phalanges og MTP-led. Sesamknoglerne ses plantart under caput metatarsale I.</div>
+    </div>
+
+    <h3>Stabiliserende strukturer</h3>
+    <h4>Plantarpladen</h4>
+    <ul>
+      <li>Fibrøs struktur på plantarsiden af MTP-leddene.</li>
+      <li>Modvirker hyperekstension og bidrager væsentligt til ledstabilitet.</li>
+      <li>Hyppig årsag til forfodssmerter og vigtig differentialdiagnose til artrit.</li>
+    </ul>
+    <h4>Kollaterale ligamenter</h4>
+    <ul>
+      <li>Stabiliserer MTP- og IP-leddene medialt og lateralt.</li>
+      <li>Begrænser sideværts bevægelse og bidrager til ledkontrol under belastning.</li>
+    </ul>
+
+    <h3>Sener og muskler</h3>
+    <h4>Fleksorsener</h4>
+    <ul>
+      <li>Løber plantart i et fibro-ossøst seneskedesystem.</li>
+      <li>Bidrager til fleksion og stabilitet under afsæt.</li>
+    </ul>
+    <h4>Ekstensorsener</h4>
+    <ul>
+      <li>Løber dorsalt tæt relateret til led og knogle.</li>
+      <li>Ansvarlige for ekstension af tæerne.</li>
+    </ul>
+    <h4>Muskler</h4>
+    <ul>
+      <li><strong>Intrinsiske fodmuskler:</strong> bidrager til stabilitet og finjustering.</li>
+      <li><strong>Ekstrinsiske muskler fra underbenet:</strong> bidrager til kraftudvikling og fremdrift.</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Ultralydsmæssige nøglepunkter</strong>
+      En mindre mængde væske i MTP I kan være et normalt fund. Tæerne skal ligge plant mod underlaget under scanning — dorsalfleksion kan give falsk indtryk af dorsal væskeansamling.
+    </div>
+  </div>
+
+  <!-- TÆER DIFFERENTIALDIAGNOSE -->
+  <div class="section-card" id="taeer-diffdiag">
+    <span class="section-number">Afsnit 2</span>
+    <h2>Tæer — Differentialdiagnostiske overvejelser</h2>
+    <p>Ved smerter og hævelse i forfoden skal man overveje en bred differentialdiagnose, der spænder fra inflammatorisk artrit til mekaniske og degenerative årsager.</p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image2.png" alt="Differentialdiagnose tabel — tæer">
+      <div class="img-caption">Tabel: Differentialdiagnostiske overvejelser ved smerter og hævelse i tæer og forfod.</div>
+    </div>
+
+    <div class="callout warning">
+      <strong>CPPD i forfoden</strong>
+      CPPD (calcium-pyrophosphate-dihydrat / pyrofosfatgigt) kan forekomme i MTP-leddene og kan klinisk ligne gigt. UL-fund af hyperekkoiske aflejringer i brusk eller synovium bør lede til nærmere vurdering.
+    </div>
+  </div>
+
+  <!-- ═══════════ ANKEL ═══════════ -->
+  <div class="module-divider">Del B: Ankel</div>
+
+  <!-- ANKEL ANATOMI -->
+  <div class="section-card" id="ankel-anatomi">
+    <span class="section-number">Afsnit 3</span>
+    <h2>Ankel — Basal anatomi</h2>
+    <p>Anklen forbinder underben og fod og kombinerer høj mekanisk belastning med relativt begrænset bevægelighed. Ledkomplekset er centralt for gang og balance og er hyppigt involveret ved både inflammatoriske og degenerative tilstande.</p>
+
+    <h3>Knogler</h3>
+    <ul>
+      <li><strong>Tibia:</strong> Danner den mediale og superiore del af ankelgaflen.</li>
+      <li><strong>Fibula:</strong> Danner den laterale malleol og bidrager til lateral stabilitet.</li>
+      <li><strong>Talus:</strong> Artikulerer med tibia og fibula i talocruralleddet samt med calcaneus i subtalarleddet.</li>
+      <li><strong>Calcaneus:</strong> Hæfte for Achillessenen.</li>
+    </ul>
+
+    <h3>Led</h3>
+    <h4>Øvre ankelled (articulatio talocruralis)</h4>
+    <ul>
+      <li>Hængselled mellem tibia, fibula og talus.</li>
+      <li>Tillader dorsalfleksion og plantarfleksion.</li>
+      <li>Ledkapslen rummer synoviale recesser, hvor effusion og synovit kan påvises ved ultralyd.</li>
+    </ul>
+    <h4>Nedre ankelled (subtalarleddet)</h4>
+    <ul>
+      <li>Led mellem talus og calcaneus.</li>
+      <li>Tillader inversion og eversion.</li>
+      <li>Klinisk vigtigt ved belastningssmerter og inflammatorisk sygdom.</li>
+    </ul>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image3.png" alt="Anklens anatomi — oversigt">
+      <div class="img-caption">Anklens anatomi med tibia, fibula, talus, calcaneus og de omgivende senesystemer.</div>
+    </div>
+
+    <h3>Stabiliserende strukturer</h3>
+    <h4>Medialt</h4>
+    <ul>
+      <li><strong>Ligamentum deltoideum:</strong> Et stærkt, vifteformet ligament, der stabiliserer anklen mod valgusbelastning.</li>
+    </ul>
+    <h4>Lateralt</h4>
+    <ul>
+      <li>Ligamentum talofibulare anterius (ATFL)</li>
+      <li>Ligamentum calcaneofibulare (CFL)</li>
+      <li>Ligamentum talofibulare posterius (PTFL)</li>
+    </ul>
+    <p>Det laterale ligamentkompleks er hyppigt afficeret ved traumer, men kan også være sekundært involveret ved inflammatoriske tilstande.</p>
+
+    <h3>Sener og muskler</h3>
+    <h4>Achillessenen</h4>
+    <ul>
+      <li>Kroppens stærkeste sene.</li>
+      <li>Insererer på calcaneus.</li>
+      <li>Funktionelt central for gang og afsæt.</li>
+    </ul>
+    <h4>M. peroneus longus og brevis</h4>
+    <ul>
+      <li>Løber bag den laterale malleol.</li>
+      <li>Stabiliserer lateralsiden af anklen.</li>
+    </ul>
+    <h4>Tibialis posterior</h4>
+    <ul>
+      <li>Løber bag den mediale malleol.</li>
+      <li>Central for svangstøtte og medial stabilitet.</li>
+    </ul>
+    <h4>Øvrige senesystemer</h4>
+    <ul>
+      <li>Fleksorsener medialt.</li>
+      <li>Ekstensorsener anteriort.</li>
+    </ul>
+    <p>Senerne er organiseret systematisk omkring malleolerne, hvilket gør anklen særligt velegnet til ultralydsvurdering af tenosynovit.</p>
+
+    <h3>Bursaer og øvrige bløddelsstrukturer</h3>
+    <ul>
+      <li><strong>Retrocalcaneal bursa:</strong> Lokaliseret mellem Achillessenen og calcaneus.</li>
+      <li><strong>Subkutan calcaneal bursa:</strong> Lokaliseret superficielt over calcaneus.</li>
+      <li><strong>Fascia plantaris:</strong> Central struktur ved hælsmerter og vigtig differentialdiagnose ved plantare smerter.</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Ultralydsmæssige nøglepunkter</strong>
+      Ved UL af ankelleddet bør man scanne let excentrisk, da synovit og væske ofte lokaliserer sig medialt eller lateralt. Tenosynovit i tibialis posterior- og peronealsener er almindelig og klinisk relevant. Skeln konsekvent mellem patologi i talocruralleddet og subtalarleddet. Husk klinik og anamnese: insufficiensfrakturer kan være vanskelige at påvise ved ultralyd.
+    </div>
+  </div>
+
+  <!-- ANKEL DIFFERENTIALDIAGNOSE -->
+  <div class="section-card" id="ankel-diffdiag">
+    <span class="section-number">Afsnit 4</span>
+    <h2>Ankel — Differentialdiagnostiske overvejelser</h2>
+    <p>Anklen er involveret ved mange systemiske og lokale tilstande. En struktureret tilgang til differentialdiagnosen er vigtig for korrekt UL-protokol og klinisk konklusion.</p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image4.png" alt="Differentialdiagnose tabel — ankler">
+      <div class="img-caption">Tabel: Differentialdiagnostiske overvejelser ved smerter og hævelse i ankelregionen.</div>
+    </div>
+
+    <div class="callout tip">
+      <strong>CPPD i anklen</strong>
+      CPPD kan ses som hyperekkoiske aflejringer i talocrural-ledbrusken. Klinisk kan det ligne akut septisk artrit eller urinsyregigt og bør indgå i differentialdiagnosen ved akut monartritis.
+    </div>
+  </div>
+
+  <!-- STANDARDPROJEKTIONER OG BILLEDER -->
+  <div class="section-card" id="projektioner">
+    <span class="section-number">Afsnit 5</span>
+    <h2>Standardprojektioner og billeder</h2>
+    <p>Standardprojektionerne for fod og ankel er:</p>
+    <ol>
+      <li>Fod, longitudinel</li>
+      <li>Fod, transversal</li>
+      <li>Laterale ankel</li>
+      <li>Mediale ankel</li>
+      <li>Posterior ankel, longitudinel</li>
+      <li>Posterior ankel, transversal</li>
+      <li>Fodsål, longitudinel</li>
+      <li>Fodsål, transversal</li>
+      <li>Tæer, longitudinel</li>
+      <li>Tæer, transversal</li>
+    </ol>
+
+    <!-- Projektion 1 -->
+    <div class="proj-header">Projektion 1: Fod, longitudinel</div>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image5.png" alt="Projektion 1 — Ankelled longitudinelt">
+      <div class="img-caption"><strong>Ankelled.</strong> Den proksimale del af transduceren placeres over den distale del af tibia (1). Herved visualiseres tibia, ledspalten (2) samt talus (3) med hypoekkoisk ledbrusk (4). Ekstensorsene (5). A. dorsalis pedis (6). Fedtpuden er indtegnet i gul trekant.</div>
+    </div>
+
+    <!-- Projektion 2 -->
+    <div class="proj-header">Projektion 2: Fod, transversal</div>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image6.png" alt="Projektion 2 — Ankelled transversalt">
+      <div class="img-caption"><strong>Ankelled, transversal.</strong> Transduceren placeres i transversalt plan over ankelleddet. Den normale hypoekkoiske ledbrusk på talus identificeres. Effusion ses som anekkoisk væske i ledspalten.</div>
+    </div>
+
+    <!-- Projektion 3 -->
+    <div class="proj-header">Projektion 3: Laterale ankel — Peronealsenerne</div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image7.png" alt="Projektion 3 — Peroneus brevis og longus">
+        <div class="img-caption"><strong>Billede 1: Peroneus brevis- og peroneus longus-sener.</strong> Transduceren placeres bag den distale del af malleolus lateralis. Herved visualiseres peroneus brevis-senen (1) og peroneus longus-senen (2). Tenosynovit ses som væske eller fortykket synovium omkring senerne.</div>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image8.png" alt="Projektion 3 — Peroneus brevis insertion">
+        <div class="img-caption"><strong>Billede 2: Peroneumsenernes forløb.</strong> Peroneus brevis-senen forløber anteriort for peroneus longus-senen ved anklen og insererer på basis af os metatarsale V. Dynamisk scanning kan påvise luxation af senerne over malleolus lateralis.</div>
+      </div>
+    </div>
+
+    <!-- Projektion 4 -->
+    <div class="proj-header">Projektion 4: Mediale ankel — Tarsaltunnelen</div>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image9.png" alt="Projektion 4 — Tarsaltunnelen">
+      <div class="img-caption"><strong>Tarsaltunnelen.</strong> Bag den mediale malleol findes tarsaltunnelen. Tunnelen er opbygget af knogle på indersiden og af flexorretinaklet (1) på ydersiden. Indholdet er: tibialis posterior-senen (2), flexor digitorum longus-senen (3), a. tibialis posterior (4), vener (5) og n. tibialis (6). Tarsaltunnelsyndrom er afklemning (impingement) af den posteriore tibialisnerve.</div>
+    </div>
+
+    <!-- Projektion 5 -->
+    <div class="proj-header">Projektion 5: Posterior ankel, longitudinel — Achillessenen</div>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image10.png" alt="Projektion 5 — Achillessene longitudinel">
+      <div class="img-caption"><strong>Achillessenen — panoramavisning.</strong> Gastrocnemius-senen (2), m. soleus (3), insertionen (4) på calcaneus (5) samt Kagers fedtlegeme (6) identificeres. Achillessenen (1) bør undersøges i både longitudinelt og transversalt plan. Senetykkelsen måles som "den tyndeste afstand på det tykkeste punkt" for at sikre, at målingen er vinkelret på senens maksimale bredde.</div>
+    </div>
+
+    <div class="callout tip">
+      <strong>Måling af Achillessenen</strong>
+      Undgå for kraftigt tryk med transduceren, da dette kan påvirke tykkelsesmålingen. Forskellen mellem tykkelsesmålinger i longitudinelt og transversalt plan bør være ≤ 0,3 mm — ellers gentages målingen.
+    </div>
+
+    <!-- Projektion 6 -->
+    <div class="proj-header">Projektion 6: Posterior ankel, transversal — Achillessenen</div>
+
+    <div class="img-row-3">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image11.png" alt="Projektion 6 billede A — gastrocnemius-aponeurosen">
+        <div class="img-caption"><strong>Billede A.</strong> Transduceren placeres transversalt over læggen. Gastrocnemius-aponeurosen (1) og m. soleus (2) ses.</div>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image12.png" alt="Projektion 6 billede B — m. soleus insertion">
+        <div class="img-caption"><strong>Billede B.</strong> Ved mere distal scanning identificeres insertionen af m. soleus (3) i gastrocnemius-aponeurosen.</div>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image13.png" alt="Projektion 6 billede C — Achillessene">
+        <div class="img-caption"><strong>Billede C.</strong> Ved yderligere distal forskydning fremtræder den velafgrænsede Achillessene (4) efterfulgt af insertionen på calcaneus (5). Den dynamiske scanning vurderer senens rotation.</div>
+      </div>
+    </div>
+
+    <!-- Projektion 7 -->
+    <div class="proj-header">Projektion 7: Fodsål, longitudinel — Fascia plantaris</div>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image14.png" alt="Projektion 7 — Fascia plantaris">
+      <div class="img-caption"><strong>Fascia plantaris.</strong> Fascia plantaris er en kraftig bindevævsstruktur, der understøtter fodens længdebue. Den forløber fra tuber calcanei (1) frem mod metatarsalhovederne. Udspringet af fascia plantaris (2) visualiseres med transducerens proksimale ende over calcaneus. Den normale fascia plantaris fremstår 2–3 mm tyk med en karakteristisk fibrillær, hyperekkoisk struktur.</div>
+    </div>
+
+    <!-- Projektion 9 -->
+    <div class="proj-header">Projektion 9: Tæer, longitudinel — MTP-led</div>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image15.png" alt="Projektion 9 — MTP-led longitudinelt">
+      <div class="img-caption"><strong>MTP-led.</strong> Caput metatarsale (1). Ledspalte (2). Phalanx proximalis (3). Ekstensorsene (4). Ved inflammation ses effusion og/eller synovial hypertrofi i ledspalten. Doppler kan påvise øget vaskularisering ved aktiv synovit.</div>
+    </div>
+  </div>
+
+  <!-- INJEKTIONER -->
+  <div class="section-card" id="injektioner">
+    <span class="section-number">Afsnit 6</span>
+    <h2>Injektioner</h2>
+
+    <h3>Tæer — MTP-led</h3>
+    <p>UL-vejledt injektion i MTP-led foretages dorsalt med transduceren i longitudinelt plan. Nålen føres fra medialt eller lateralt ind i ledspalten under UL-vejledning. Dorsal tilgang under ekstensorsenen foretrækkes.</p>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image16.png" alt="MTP-led injektion — UL-vejledt">
+      <div class="img-caption">UL-vejledt injektion i MTP-led. Nålen (pile) visualiseres i det longitudinelle plan og føres ind i ledspalten (2) dorsalt. Patientens tæer bør holdes i neutral stilling under proceduren.</div>
+    </div>
+
+    <h3>Ankel — Talocruralleddet</h3>
+    <p>UL-vejledt injektion i ankelleddet foretages anteriort med transduceren i longitudinelt plan. Vigtig anatomisk reference er a. dorsalis pedis, som skal lokaliseres og undgås. Nålen føres medialt for arterien ind i ledspalten.</p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul4/image17.png" alt="Ankel injektion — UL-vejledt">
+      <div class="img-caption">UL-vejledt injektion i talocruralleddet. A. dorsalis pedis (pil) identificeres med Doppler og undgås. Nålen føres anteriort medialt for arterien ind i den anteriore recess af ankelleddet.</div>
+    </div>
+
+    <div class="callout warning">
+      <strong>Vigtig anatomisk struktur</strong>
+      A. dorsalis pedis løber anteriort over ankelleddet og skal altid identificeres med farve-Doppler inden injektion for at undgå vaskulær komplikation.
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-section" id="quiz">
+    <h2>Vidensspørgsmål</h2>
+    <p class="quiz-intro">Test din viden om tæer og ankler. Vælg det bedste svar og tjek din besvarelse.</p>
+
+    <!-- Q1 -->
+    <div class="question-block" id="q1">
+      <p class="q-text">1. Hvilket MTP-led er hyppigst afficeret ved urinsyregigt (gigt)?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q1" value="A"> A) MTP 1 (storetåen)</label>
+        <label><input type="radio" name="q1" value="B"> B) MTP 2</label>
+        <label><input type="radio" name="q1" value="C"> C) MTP 3</label>
+        <label><input type="radio" name="q1" value="D"> D) MTP 4</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q1','A','Korrekt! MTP 1 (storetåens grundled) er klassisk og hyppigst afficeret ved urinsyregigt — dette kaldes podagra. Klinisk ses akut, intenst smertende, rødmende hævelse.','Ikke korrekt. MTP 1 (storetåens grundled) er det hyppigst afficerede led ved urinsyregigt — podagra er den klassiske diagnose.')">Tjek svar</button>
+      <div class="q-feedback" id="q1-feedback"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block" id="q2">
+      <p class="q-text">2. Hvilket udsagn er korrekt ved UL-scanning af MTP-leddene?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q2" value="A"> A) Al væske i MTP-led er patologisk</label>
+        <label><input type="radio" name="q2" value="B"> B) Dorsalfleksion af tæerne forbedrer altid vurderingen ved UL</label>
+        <label><input type="radio" name="q2" value="C"> C) Doppler er aldrig relevant ved scanning af MTP-leddene</label>
+        <label><input type="radio" name="q2" value="D"> D) En lille mængde væske i MTP 1 kan være normalt</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q2','D','Korrekt! En lille mængde væske i MTP 1 kan være et normalt fund og bør ikke automatisk tolkes som patologisk. Dorsalfleksion kan desuden give falsk indtryk af dorsal væskeansamling.','Ikke korrekt. En lille mængde væske i MTP 1 kan være normalt. Dorsalfleksion af tæerne giver tværtimod et falsk indtryk af dorsal væskeansamling og bør undgås.')">Tjek svar</button>
+      <div class="q-feedback" id="q2-feedback"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block" id="q3">
+      <p class="q-text">3. Hvilken struktur skal man altid identificere og undgå ved UL-vejledt injektion i ankelleddet anteriort?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q3" value="A"> A) A. dorsalis pedis</label>
+        <label><input type="radio" name="q3" value="B"> B) Nervus peroneus profundus</label>
+        <label><input type="radio" name="q3" value="C"> C) Tibialis anterior-senen</label>
+        <label><input type="radio" name="q3" value="D"> D) Vena saphena magna</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q3','A','Korrekt! A. dorsalis pedis løber anteriort over ankelleddet og skal altid lokaliseres med farve-Doppler inden injektion for at undgå vaskulær komplikation.','Ikke korrekt. A. dorsalis pedis er den kritiske struktur — den løber anteriort over ankelleddet og skal identificeres med Doppler inden nålen føres frem.')">Tjek svar</button>
+      <div class="q-feedback" id="q3-feedback"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block" id="q4">
+      <p class="q-text">4. Hvilket udsagn er korrekt ved UL-scanning af ankelleddet for synovit?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q4" value="A"> A) Effusion ses altid centralt i leddet</label>
+        <label><input type="radio" name="q4" value="B"> B) Synovit kan ligge lateralt eller medialt og kan overses ved central scanning</label>
+        <label><input type="radio" name="q4" value="C"> C) Subtalarleddet er uden klinisk betydning</label>
+        <label><input type="radio" name="q4" value="D"> D) Tenosynovit er sjælden ved inflammatorisk sygdom</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q4','B','Korrekt! Synovit og væske i ankelleddet lokaliserer sig hyppigt excentrisk — medialt eller lateralt. Det er derfor vigtigt at scanne let excentrisk og ikke kun centralt anteriort.','Ikke korrekt. Synovit kan ligge lateralt eller medialt og kan overses ved udelukkende central scanning. Man bør scanne excentrisk for at opfange al patologi.')">Tjek svar</button>
+      <div class="q-feedback" id="q4-feedback"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block" id="q5">
+      <p class="q-text">5. Tarsaltunnelen bag den mediale malleol indeholder:</p>
+      <div class="q-options">
+        <label><input type="radio" name="q5" value="A"> A) Peroneus brevis- og longus-senerne</label>
+        <label><input type="radio" name="q5" value="B"> B) Achillessenen og retrocalcaneal bursa</label>
+        <label><input type="radio" name="q5" value="C"> C) Tibialis posterior-sene, flexor digitorum longus, a. tibialis posterior og n. tibialis</label>
+        <label><input type="radio" name="q5" value="D"> D) Ekstensorsenerne og a. dorsalis pedis</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q5','C','Korrekt! Tarsaltunnelen indeholder tibialis posterior-senen, flexor digitorum longus-senen, a. tibialis posterior, vener og n. tibialis. Tarsaltunnelsyndrom opstår ved afklemning af n. tibialis i denne tunnel.','Ikke korrekt. Tarsaltunnelen bag den mediale malleol indeholder tibialis posterior-senen, flexor digitorum longus, a. tibialis posterior og n. tibialis — kend dette indhold da det er centralt ved tarsaltunnelsyndrom.')">Tjek svar</button>
+      <div class="q-feedback" id="q5-feedback"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block" id="q6">
+      <p class="q-text">6. Hvilket udsagn om tenosynovit i anklen er korrekt?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q6" value="A"> A) Ses udelukkende ved overbelastning</label>
+        <label><input type="radio" name="q6" value="B"> B) Ses udelukkende ved inflammatorisk artrit</label>
+        <label><input type="radio" name="q6" value="C"> C) Ses ved både inflammatorisk artrit og overbelastning</label>
+        <label><input type="radio" name="q6" value="D"> D) Er sjælden og oftest asymptomatisk</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q6','C','Korrekt! Tenosynovit i anklen ses ved både inflammatorisk artrit (fx reumatoid artrit, spondylartropati) og ved overbelastning/mekanisk irritation. Klinisk kontekst er afgørende for korrekt tolkning.','Ikke korrekt. Tenosynovit i anklen kan ses ved både inflammatorisk artrit og overbelastning — klinisk kontekst og anamnese er afgørende for korrekt differentiering.')">Tjek svar</button>
+      <div class="q-feedback" id="q6-feedback"></div>
+    </div>
+
+  </div><!-- /quiz -->
+
+  <div class="footer-nav">
+    <a href="modul3_knaee_hofte.html">← Modul 3: Knæ og hofte</a>
+    <span style="color:#aaa; font-size:0.9rem;">Kursus afsluttet</span>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Quiz check
+  function checkAnswer(qId, correct, okMsg, wrongMsg) {
+    const sel = document.querySelector(`input[name="${qId}"]:checked`);
+    const fb  = document.getElementById(`${qId}-feedback`);
+    if (!sel) { fb.style.display='block'; fb.className='q-feedback wrong'; fb.textContent='Vælg venligst et svar.'; return; }
+    fb.style.display = 'block';
+    if (sel.value === correct) {
+      fb.className = 'q-feedback correct';
+      fb.textContent = '✓ ' + okMsg;
+    } else {
+      fb.className = 'q-feedback wrong';
+      fb.textContent = '✗ ' + wrongMsg;
+    }
+  }
+</script>
+</body>
+</html>
