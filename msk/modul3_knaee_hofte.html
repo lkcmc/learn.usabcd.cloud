@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul 3 – Knæ og hofte</title>
+<style>
+  :root {
+    --blue-dark:  #1F497D;
+    --blue-mid:   #2E75B6;
+    --blue-light: #EEF4FB;
+    --blue-accent:#BDD7EE;
+    --green:      #2E7D32;
+    --green-bg:   #E8F5E9;
+    --orange:     #E65100;
+    --orange-bg:  #FFF3E0;
+    --grey-text:  #333;
+    --grey-light: #F5F7FA;
+    --border:     #D0DFF0;
+    --white:      #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 16px; line-height: 1.7; color: var(--grey-text); background: #F0F4F9; }
+  #progress-bar { position: fixed; top: 0; left: 0; width: 0%; height: 4px; background: var(--blue-mid); z-index: 1000; transition: width 0.2s ease; }
+  .page-wrapper { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+  .course-header { background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%); color: white; padding: 2.5rem 2rem; border-radius: 12px; margin-bottom: 2rem; }
+  .course-header .tag { display: inline-block; background: rgba(255,255,255,0.2); color: white; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.25rem 0.75rem; border-radius: 20px; margin-bottom: 0.8rem; }
+  .course-header h1 { font-size: 1.9rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .course-header p { opacity: 0.88; font-size: 1rem; }
+  .toc { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.5rem 1.8rem; margin-bottom: 2.5rem; }
+  .toc h2 { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--blue-mid); margin-bottom: 0.8rem; }
+  .toc ol { padding-left: 1.2rem; }
+  .toc li { margin-bottom: 0.3rem; }
+  .toc a { color: var(--blue-dark); text-decoration: none; font-size: 0.95rem; }
+  .toc a:hover { text-decoration: underline; color: var(--blue-mid); }
+  .module-divider { background: linear-gradient(135deg, #1a3a5c 0%, var(--blue-dark) 100%); color: white; padding: 1.2rem 1.8rem; border-radius: 10px; margin: 2.5rem 0 1.5rem; font-size: 1.2rem; font-weight: 700; letter-spacing: 0.04em; }
+  .section-card { background: var(--white); border-radius: 12px; border: 1px solid var(--border); padding: 2rem 2rem 2.2rem; margin-bottom: 2rem; scroll-margin-top: 1.5rem; }
+  .section-number { display: inline-block; background: var(--blue-mid); color: white; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 0.2rem 0.7rem; border-radius: 20px; margin-bottom: 0.6rem; }
+  .section-card h2 { font-size: 1.45rem; color: var(--blue-dark); font-weight: 700; margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--blue-accent); }
+  .section-card h3 { font-size: 1.1rem; color: var(--blue-mid); font-weight: 600; margin: 1.5rem 0 0.6rem; }
+  .section-card h4 { font-size: 0.98rem; color: var(--blue-dark); font-weight: 600; margin: 1.1rem 0 0.4rem; }
+  .section-card p { margin-bottom: 0.9rem; }
+  .section-card ul, .section-card ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  .section-card li { margin-bottom: 0.35rem; }
+  .img-block { margin: 1.4rem 0; text-align: center; }
+  .img-block img { max-width: 100%; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .img-block.medium img { max-width: 70%; }
+  .img-block.small img { max-width: 45%; }
+  .img-caption { font-size: 0.87rem; color: #666; font-style: italic; margin-top: 0.5rem; line-height: 1.5; }
+  .img-row { display: flex; gap: 1rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row .img-block { flex: 1; margin: 0; }
+  .img-row-3 { display: flex; gap: 0.8rem; margin: 1.4rem 0; align-items: flex-start; }
+  .img-row-3 .img-block { flex: 1; margin: 0; }
+  .callout { border-radius: 8px; padding: 1rem 1.2rem; margin: 1.2rem 0; border-left: 4px solid; }
+  .callout.info { background: var(--blue-light); border-color: var(--blue-mid); }
+  .callout.tip { background: var(--green-bg); border-color: var(--green); }
+  .callout.warning { background: var(--orange-bg); border-color: var(--orange); }
+  .callout strong { display: block; margin-bottom: 0.3rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .callout.info strong { color: var(--blue-mid); }
+  .callout.tip strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+  .def-table { width: 100%; border-collapse: collapse; margin: 1.2rem 0; font-size: 0.93rem; }
+  .def-table th { background: var(--blue-dark); color: white; padding: 0.7rem 0.9rem; text-align: left; font-weight: 600; }
+  .def-table td { padding: 0.65rem 0.9rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .def-table tr:nth-child(even) td { background: var(--grey-light); }
+  .def-table tr:hover td { background: var(--blue-light); }
+  .proj-header { background: var(--blue-light); border-left: 4px solid var(--blue-mid); padding: 0.7rem 1rem; border-radius: 0 8px 8px 0; margin: 1.8rem 0 1rem; font-weight: 600; color: var(--blue-dark); }
+  .quiz-section { background: var(--white); border-radius: 12px; border: 2px solid var(--blue-mid); padding: 2rem; margin-bottom: 2rem; }
+  .quiz-section h2 { font-size: 1.35rem; color: var(--blue-dark); margin-bottom: 0.4rem; }
+  .quiz-section .quiz-intro { color: #666; font-size: 0.93rem; margin-bottom: 1.8rem; }
+  .question-block { background: var(--grey-light); border-radius: 8px; padding: 1.2rem 1.4rem; margin-bottom: 1.2rem; }
+  .question-block p.q-text { font-weight: 600; margin-bottom: 0.8rem; color: var(--blue-dark); }
+  .q-options label { display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0.7rem; border-radius: 6px; cursor: pointer; margin-bottom: 0.3rem; font-size: 0.95rem; transition: background 0.15s; }
+  .q-options label:hover { background: var(--blue-accent); }
+  .q-options input[type="radio"] { margin-top: 0.2rem; accent-color: var(--blue-mid); }
+  .q-feedback { display: none; margin-top: 0.8rem; padding: 0.7rem 1rem; border-radius: 6px; font-size: 0.93rem; }
+  .q-feedback.correct { background: var(--green-bg); color: var(--green); border-left: 3px solid var(--green); }
+  .q-feedback.wrong { background: var(--orange-bg); color: var(--orange); border-left: 3px solid var(--orange); }
+  .check-btn { background: var(--blue-mid); color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer; margin-top: 0.6rem; font-weight: 600; transition: background 0.15s; }
+  .check-btn:hover { background: var(--blue-dark); }
+  .footer-nav { display: flex; justify-content: space-between; align-items: center; padding: 1.2rem 1.5rem; background: var(--white); border-radius: 10px; border: 1px solid var(--border); margin-top: 1rem; }
+  .footer-nav a { color: var(--blue-mid); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  .footer-nav a:hover { color: var(--blue-dark); text-decoration: underline; }
+  @media (max-width: 600px) { .course-header h1 { font-size: 1.4rem; } .section-card { padding: 1.4rem 1.2rem 1.6rem; } .img-row, .img-row-3 { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div id="progress-bar"></div>
+<div class="page-wrapper">
+
+  <div class="course-header">
+    <div class="tag">Muskuloskeletal Ultralyd · Modul 3</div>
+    <h1>Knæ og hofte</h1>
+    <p>Basal anatomi, standardprojektioner og differentialdiagnostiske overvejelser</p>
+  </div>
+
+  <div class="toc">
+    <h2>Indhold</h2>
+    <ol>
+      <li><a href="#knae-anatomi">Knæ — Basal anatomi</a></li>
+      <li><a href="#knae-diffdiag">Knæ — Differentialdiagnoser</a></li>
+      <li><a href="#knae-projektioner">Knæ — Standardprojektioner og billeder</a></li>
+      <li><a href="#knae-injektioner">Knæ — Injektioner</a></li>
+      <li><a href="#hofte-anatomi">Hofte — Basal anatomi</a></li>
+      <li><a href="#hofte-diffdiag">Hofte — Differentialdiagnoser</a></li>
+      <li><a href="#hofte-projektioner">Hofte — Standardprojektioner og billeder</a></li>
+      <li><a href="#hofte-injektioner">Hofte — Injektioner</a></li>
+      <li><a href="#quiz">Vidensspørgsmål</a></li>
+    </ol>
+  </div>
+
+  <!-- ═══════════ KNÆ ═══════════ -->
+  <div class="module-divider">Del A: Knæ</div>
+
+  <!-- KNÆ ANATOMI -->
+  <div class="section-card" id="knae-anatomi">
+    <span class="section-number">Afsnit 1</span>
+    <h2>Knæ — Basal anatomi</h2>
+    <p>Knæet er kroppens største synovialled og et centralt vægtbærende led, som kombinerer høj stabilitet med betydelig bevægelighed. Leddet fungerer primært som et modificeret hængselled, men tillader også begrænset rotation, særligt i flekteret stilling. Det store synoviale areal og tilstedeværelsen af flere intraartikulære strukturer gør knæet særligt udsat for inflammatorisk, degenerativ og traumatisk patologi.</p>
+
+    <h3>Knogler</h3>
+    <ul>
+      <li><strong>Femur:</strong> De mediale og laterale femurkondyler danner den proksimale ledflade.</li>
+      <li><strong>Tibia:</strong> Det tibiale plateau udgør den distale ledflade i femorotibialleddet.</li>
+      <li><strong>Patella:</strong> Sesamknogle indlejret i quadricepssenen; øger ekstensorapparatets momentarm.</li>
+    </ul>
+
+    <h3>Led</h3>
+    <p>Knæet består af to funktionelle ledkomplekser omsluttet af en fælles ledkapsel:</p>
+    <h4>Femorotibialleddet</h4>
+    <ul>
+      <li>Består af et medialt og et lateralt ledkammer mellem femur og tibia.</li>
+      <li>Centralt for vægtbæring og belastningsoverførsel.</li>
+    </ul>
+    <h4>Patellofemoral-leddet</h4>
+    <ul>
+      <li>Led mellem patella og femur.</li>
+      <li>Afgørende for ekstensorfunktionen og belastning ved fleksion.</li>
+    </ul>
+
+    <h3>Brusk og menisker</h3>
+    <h4>Ledbrusk</h4>
+    <ul>
+      <li>Beklæder femur-, tibia- og patellaflader.</li>
+      <li>Reducerer friktion og absorberer belastning.</li>
+    </ul>
+    <h4>Meniscus medialis og lateralis</h4>
+    <ul>
+      <li>Halvmåneformede fibrocartilaginøse strukturer, som fordeler belastning, øger ledkongruens og bidrager til stabilitet.</li>
+    </ul>
+
+    <h3>Stabiliserende strukturer</h3>
+    <ul>
+      <li><strong>Korsbånd:</strong>
+        <ul>
+          <li>Ligamentum cruciatum anterius (ACL)</li>
+          <li>Ligamentum cruciatum posterius (PCL)</li>
+        </ul>
+      </li>
+      <li><strong>Kollaterale ligamenter:</strong>
+        <ul>
+          <li>Ligamentum collaterale mediale (MCL)</li>
+          <li>Ligamentum collaterale laterale (LCL)</li>
+        </ul>
+      </li>
+    </ul>
+    <p>Disse strukturer begrænser anterior/posterior translation samt varus- og valgusbevægelse.</p>
+
+    <h3>Ledkapsel og recesser</h3>
+    <p>Ledkapslen er rummelig, beklædt med synovium og danner flere synoviale recesser.</p>
+    <h4>Suprapatellare recess</h4>
+    <ul>
+      <li>En kranial udvidelse af ledkapslen, der kommunikerer direkte med ledhulen.</li>
+      <li>Mest sensitive lokalisation for påvisning af effusion og synovit ved ultralyd.</li>
+      <li>Små mængder fysiologisk væske kan forekomme, særligt hos yngre og fysisk aktive.</li>
+      <li>Knæet bør være i let fleksion ved vurdering af effusion for optimal visualisering.</li>
+    </ul>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image1.png" alt="Knæets anatomi — oversigt">
+      <div class="img-caption">Knæets anatomi med de vigtigste strukturer: femurkondyler, tibialt plateau, patella, menisci og stabiliserende ligamenter.</div>
+    </div>
+
+    <h3>Muskler og extensorapparat</h3>
+    <ul>
+      <li><strong>m. quadriceps femoris:</strong> Primære ekstensor af knæet.</li>
+      <li><strong>Patellarsenen:</strong> Forbinder patella til tuberositas tibiae.</li>
+      <li><strong>Hasemuskulaturen (hamstrings):</strong> Bidrager til fleksion og dynamisk stabilitet.</li>
+    </ul>
+
+    <h3>Bursae og cyster</h3>
+    <h4>Bursa</h4>
+    <ul>
+      <li>Suprapatellare bursa (kommunikerer med ledhulen)</li>
+      <li>Præpatellar bursa</li>
+      <li>Infrapatellar bursa</li>
+    </ul>
+    <h4>Baker cyste</h4>
+    <ul>
+      <li>Lokaliseret posteriort i relation til semimembranosus og gastrocnemius.</li>
+      <li>Næsten altid sekundær til intraartikulær patologi.</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Ultralydsmæssige nøglepunkter</strong>
+      Suprapatellare recess er et sensitivt og lettilgængeligt sted for påvisning af effusion og synovit. Præpatellar bursa komprimeres let og kan overses ved ultralyd. Femoralbrusk kan vurderes for CPPD, dobbeltkonturtegn og bruskkvalitet.
+    </div>
+  </div>
+
+  <!-- KNÆ DIFFERENTIALDIAGNOSE -->
+  <div class="section-card" id="knae-diffdiag">
+    <span class="section-number">Afsnit 2</span>
+    <h2>Knæ — Differentialdiagnostiske overvejelser</h2>
+    <p>Ved smerter og hævelse i knæet er det vigtigt at overveje en bred differentialdiagnose. Nedenstående tabel giver et overblik over de hyppigste tilstande.</p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image2.png" alt="Differentialdiagnose tabel — knæ">
+      <div class="img-caption">Tabel: Differentialdiagnostiske overvejelser ved smerter og hævelse i knæet.</div>
+    </div>
+
+    <div class="callout tip">
+      <strong>CPPD</strong>
+      CPPD (calcium-pyrophosphate-dihydrat / pyrofosfatgigt) ses i knæet hyppigst som kalcifikation i femoralbrusk eller menisci, og bør altid overvejes ved uventet fund af hyperekkoiske strukturer i brusken.
+    </div>
+  </div>
+
+  <!-- KNÆ STANDARDPROJEKTIONER OG BILLEDER -->
+  <div class="section-card" id="knae-projektioner">
+    <span class="section-number">Afsnit 3</span>
+    <h2>Knæ — Standardprojektioner og billeder</h2>
+    <p>De 8 standardprojektioner for knæet er:</p>
+    <ol>
+      <li>Anterior, longitudinel</li>
+      <li>Anterior, transversal</li>
+      <li>Medial, longitudinel</li>
+      <li>Medial, transversal</li>
+      <li>Lateral, longitudinel</li>
+      <li>Lateral, transversal</li>
+      <li>Posterior, longitudinel</li>
+      <li>Posterior, transversal</li>
+    </ol>
+    <p>I dette kursus gennemgås projektion 1, 2, 7 og 8, da disse er mest sensitive for påvisning af effusion og bakercyste.</p>
+
+    <!-- Projektion 1 -->
+    <div class="proj-header">Projektion 1: Anterior, longitudinel</div>
+    <p><strong>Quadriceps- og patellarsene</strong></p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image3.png" alt="Projektion 1 — Quadricepssene">
+      <div class="img-caption"><strong>Billede 1: Quadricepssenens insertion.</strong> Quadricepssenens insertion (1) ved patellas øvre pol (2). Transducerens distale ende placeres over patellas proksimale rand i longitudinelt plan. Knæet flekteres 90° for at undgå bølgeartefakter i senen.</div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image4.png" alt="Projektion 1 — Patellarsene proksimal">
+        <div class="img-caption"><strong>Billede 2: Patellarsenen.</strong> Transducerens proksimale ende placeres over patellas distale rand i longitudinelt plan. Patella (3) og den proksimale del af patellarsenen (4) visualiseres. Den normale patellarsene fremstår med fine, parallelle, hyperekkoiske fibre og skarpt afgrænsede konturer. Knæet flekteres 90° for at undgå bølgeartefakter. Hoffas fedtpude identificeres som (6).</div>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image5.png" alt="Projektion 1 — Patellarsene distal">
+        <div class="img-caption"><strong>Billede 3: Patellarsenens insertion.</strong> Ved distal forskydning af transduceren i samme longitudinelle plan visualiseres patellarsenens insertion på tuberositas tibiae (5). Der kan ofte ses en mindre mængde væske (3) i bursaerne mellem patellarsenen og tibia.</div>
+      </div>
+    </div>
+
+    <!-- Projektion 2 -->
+    <div class="proj-header">Projektion 2: Anterior, transversal</div>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image6.png" alt="Projektion 2 — Femoral kondylbrusk">
+      <div class="img-caption"><strong>Femoral kondylbrusk.</strong> Transduceren placeres umiddelbart proksimalt for patellas øvre rand i transversalt plan. Herved visualiseres den hypoekkoiske ledbrusk (1) på femurkondylen (2). Knæet holdes i maksimal fleksion for optimal fremstilling af brusken.</div>
+    </div>
+
+    <!-- Projektion 7 -->
+    <div class="proj-header">Projektion 7: Posterior, longitudinel</div>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image7.png" alt="Projektion 7 — Posterior longitudinel">
+      <div class="img-caption"><strong>Medial menisk, posterior horn.</strong> Transduceren placeres medialt i fossa poplitea i longitudinelt plan. Herved visualiseres baghornet af den mediale menisk (1). Ved dynamisk scanning med fleksion af knæet kan menisken presses ud af ledspalten. Femur (2). Tibia (3).</div>
+    </div>
+
+    <!-- Projektion 8 -->
+    <div class="proj-header">Projektion 8: Posterior, transversal</div>
+
+    <div class="img-block medium">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image8.png" alt="Projektion 8 — Posterior transversal">
+      <div class="img-caption"><strong>Posterior transversal — Baker cyste.</strong> Transduceren placeres i fossa poplitea i transversalt plan. Semimembranosus (1) og mediale gastrocnemiushoved (2) identificeres. En Baker cyste ses som en anekkoisk eller hypoekkoisk struktur posteriort ved disse muskler.</div>
+    </div>
+  </div>
+
+  <!-- KNÆ INJEKTIONER -->
+  <div class="section-card" id="knae-injektioner">
+    <span class="section-number">Afsnit 4</span>
+    <h2>Knæ — Injektioner</h2>
+    <p>UL-vejledt injektion i knæet foretages typisk via den suprapatellare recess, da dette er lettilgængeligt og giver direkte adgang til ledhulen. Patienten kan ligge i let flekteret stilling. Injektionsnålen føres lateralt eller medialt under UL-vejledning.</p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image9.png" alt="Knæ injektion — UL-vejledt">
+      <div class="img-caption">UL-vejledt injektion i knæets suprapatellare recess. Nålen (pile) fremstår som en hyperekkoisk linje med posterior akustisk skygge.</div>
+    </div>
+
+    <div class="callout tip">
+      <strong>Klinisk tip</strong>
+      Suprapatellare recess kommunikerer direkte med ledhulen. Selv ved lille effusion kan dette rum tilgås sikkert og gives injektion med god præcision under UL-vejledning.
+    </div>
+  </div>
+
+  <!-- ═══════════ HOFTE ═══════════ -->
+  <div class="module-divider">Del B: Hofte</div>
+
+  <!-- HOFTE ANATOMI -->
+  <div class="section-card" id="hofte-anatomi">
+    <span class="section-number">Afsnit 5</span>
+    <h2>Hofte — Basal anatomi</h2>
+    <p>Hofteleddet er et dybt, vægtbærende kugleled mellem caput femoris og acetabulum. Leddet er konstrueret til at kombinere høj stabilitet med betydelig bevægelighed. Stabiliteten er i høj grad ossøs og suppleres af en kraftig ledkapsel, stærke ligamenter og labrum acetabulare. Den dybe beliggenhed medfører kliniske og ultralydsmæssige udfordringer, idet intraartikulære strukturer kun delvist kan visualiseres direkte ved ultralyd.</p>
+
+    <h3>Knogler</h3>
+    <ul>
+      <li><strong>Femur:</strong> Caput femoris artikulerer med acetabulum. Collum femoris er biomekanisk udsat.</li>
+      <li><strong>Pelvis:</strong> Acetabulum dannes af os ilium, os ischii og os pubis og udgør den konkave ledskål.</li>
+    </ul>
+
+    <h3>Led</h3>
+    <p>Hofteleddet er et synovialt kugleled mellem caput femoris og acetabulum. Ledfladerne er beklædt med hyalin brusk og muliggør bevægelser i flere planer: fleksion/ekstension, abduktion/adduktion samt ind- og udadrotation.</p>
+    <p>Ledhulen er relativt dyb, og kapslen er stærk og tæt tilhæftet, især anteriort. Dette øger stabiliteten, men reducerer leddets tolerance over for kapsulær inflammation. Effusion lokaliseres typisk anteriort langs collum femoris.</p>
+
+    <h3>Ledflader og labrum</h3>
+    <ul>
+      <li><strong>Ledbrusk:</strong> Beklæder både caput femoris og acetabulum og sikrer lav friktion og jævn kraftoverførsel.</li>
+      <li><strong>Labrum acetabulare:</strong> Fibrøs bruskring, der forøger acetabulums dybde, bidrager til stabilitet og skaber et intraartikulært undertryk.</li>
+    </ul>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image10.png" alt="Hofteleddets anatomi — oversigt">
+      <div class="img-caption">Hofteleddets anatomi med caput femoris, acetabulum, labrum acetabulare og ledkapslen.</div>
+    </div>
+
+    <h3>Ledkapsel og ligamenter</h3>
+    <h4>Ledkapsel</h4>
+    <ul>
+      <li>Kraftig og relativt stram, især anteriort.</li>
+      <li>Begrænser ekstreme bevægelser.</li>
+      <li>Bidrager væsentligt til stabilitet.</li>
+    </ul>
+    <h4>Ligamenter</h4>
+    <ul>
+      <li><strong>Ligamentum iliofemorale</strong> — stærkeste ligament; modvirker ekstension.</li>
+      <li>Ligamentum pubofemorale</li>
+      <li>Ligamentum ischiofemorale</li>
+      <li><strong>Ligamentum teres femoris:</strong> Indeholder kar til caput femoris (særligt hos børn); begrænset stabiliserende betydning hos voksne.</li>
+    </ul>
+
+    <h3>Muskler og sener</h3>
+    <h4>Anteriort</h4>
+    <ul>
+      <li><strong>m. iliopsoas:</strong> Primær hoftefleksor. Senen passerer anteriort over hofteleddet og kan være kilde til smerter ved belastning eller bursit.</li>
+    </ul>
+    <h4>Lateralt</h4>
+    <ul>
+      <li><strong>m. gluteus medius og m. gluteus minimus:</strong> Insererer på trochanter major og er centrale for bækkenstabilitet under gang.</li>
+    </ul>
+    <h4>Posteriort</h4>
+    <ul>
+      <li>m. gluteus maximus og de korte udadrotatorer.</li>
+    </ul>
+    <h4>Medialt</h4>
+    <ul>
+      <li>Adduktorgruppen. Vigtig for stabilitet og kraftudvikling. Kan afficeres ved entesopati eller inflammatorisk sygdom.</li>
+    </ul>
+
+    <h3>Bursae</h3>
+    <ul>
+      <li><strong>Bursa iliopsoas:</strong> Lokaliseret anteriort; kan kommunikere med ledhulen og være sekundært involveret ved intraartikulær patologi.</li>
+      <li><strong>Bursa trochanterica:</strong> Lokaliseret lateralt over trochanter major; hyppig årsag til laterale hoftesmerter.</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Ultralydsmæssige nøglepunkter</strong>
+      Ved anteriort scanning er hoften i neutral rotation (tæerne peger lige op), og transduceren vinkles ved at kippe hælen (rock), så collum femoris ligger horisontalt på billedet. Sammenligning med kontralateral side kan være afgørende ved tvivl om effusion eller kapsulær fortykkelse. Effusion vurderes bedst langs collum femoris. Den dybe beliggenhed begrænser ultralydens direkte visualisering af intraartikulær patologi, mens periartikulære strukturer ofte er veltilgængelige.
+    </div>
+  </div>
+
+  <!-- HOFTE DIFFERENTIALDIAGNOSE -->
+  <div class="section-card" id="hofte-diffdiag">
+    <span class="section-number">Afsnit 6</span>
+    <h2>Hofte — Differentialdiagnostiske overvejelser</h2>
+    <p>Ved smerter og hævelse i hofteregionen er det vigtigt at skelne mellem intraartikulær og periartikulær patologi. Nedenstående tabel giver et overblik.</p>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image11.png" alt="Differentialdiagnose tabel — hofte">
+      <div class="img-caption">Tabel: Differentialdiagnostiske overvejelser ved smerter og hævelse i hofteregionen.</div>
+    </div>
+
+    <div class="callout warning">
+      <strong>Laterale hoftesmerter</strong>
+      Ved laterale hoftesmerter ses der ofte ingen tydelig væske i bursa trochanterica. Symptomerne skyldes hyppigst entesopati eller gluteal tendinopati — ikke bursit. Dette kan have konsekvenser for behandlingsvalget.
+    </div>
+  </div>
+
+  <!-- HOFTE STANDARDPROJEKTIONER OG BILLEDER -->
+  <div class="section-card" id="hofte-projektioner">
+    <span class="section-number">Afsnit 7</span>
+    <h2>Hofte — Standardprojektioner og billeder</h2>
+    <p>De 8 standardprojektioner for hoften er:</p>
+    <ol>
+      <li>Anterior, longitudinel/oblik</li>
+      <li>Anterior, transversal</li>
+      <li>Medial, longitudinel/oblik</li>
+      <li>Medial, transversal</li>
+      <li>Lateral, longitudinel</li>
+      <li>Lateral, transversal</li>
+      <li>Posterior, longitudinel</li>
+      <li>Posterior, transversal</li>
+    </ol>
+    <p>I dette kursus tages der kun udgangspunkt i <strong>projektion 1</strong>, da dette er det mest sensitive sted for påvisning af væskeansamling.</p>
+
+    <!-- Projektion 1 -->
+    <div class="proj-header">Projektion 1: Anterior, longitudinel/oblik</div>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image12.png" alt="Hofte projektion 1 — anterior longitudinal">
+      <div class="img-caption">Ultralyd af hofteleddet udført i et longitudinelt, skråt plan langs collum femoris med konveks transducer. Den proksimale del af femurskaftet (4) samt hofteleddets anteriore recess (5).</div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image13.png" alt="Hofte projektion 1 — caput og labrum">
+        <div class="img-caption">Ved proximal og medial forskydning af transduceren visualiseres caput femoris (1), acetabulums knoglekant (3) samt labrum acetabulare (2). Kun den anteriore del af labrum kan fremstilles ved ultralyd, hvilket er klinisk relevant, da størstedelen af labrumlæsioner forekommer i dette område.</div>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image14.png" alt="Hofte projektion 1 — effusion">
+        <div class="img-caption">Effusion i hofteleddets anteriore recess. Væsken ses som et anekkoisk eller hypoekkoisk rum langs collum femoris (pil). Sammenligning med kontralateral side anbefales ved usikkerhed om mænden er patologisk.</div>
+      </div>
+    </div>
+
+    <div class="img-block">
+      <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image15.png" alt="Hofte projektion 1 — konveks transducer">
+      <div class="img-caption">Scanning med konveks transducer. Den konvekse transducer foretrækkes pga. hofteleddets dybe beliggenhed, da den giver bedre penetration end en lineær transducer.</div>
+    </div>
+  </div>
+
+  <!-- HOFTE INJEKTIONER -->
+  <div class="section-card" id="hofte-injektioner">
+    <span class="section-number">Afsnit 8</span>
+    <h2>Hofte — Injektioner</h2>
+    <p>UL-vejledt injektion i hofteleddet foretages anteriort langs collum femoris under UL-vejledning. Patienten ligger i ryglejende stilling med hoften i neutral rotation. Sigtet er mod kapslens anteriore omslagsfold.</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image16.png" alt="Hofte injektion — UL-vejledt">
+        <div class="img-caption">UL-vejledt injektion anteriort i hofteleddet. Nålen føres langs collum femoris mod kapslens anteriore omslagsfold.</div>
+      </div>
+      <div class="img-block">
+        <img src="https://txkjogvsrdygoytozjzm.supabase.co/storage/v1/object/public/usabcd-media/msk/modul3/image17.png" alt="Hofte injektion — nålespids i kapslen">
+        <div class="img-caption">Nålespidsen (pil) er placeret ved kapslens anteriore omslagsfold. Appositionen kan bekræftes ved injektion af fysiologisk saltvand, som spreder sig i ledhulen.</div>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <strong>Klinisk tip</strong>
+      Ved UL-vejledt injektion i hoften anbefales konveks transducer til lokalisering, efterfulgt af nåleindføring med lineær transducer for bedre nålevisualisering. Patienten bør have hoften i neutral rotation — tæerne peger lige op.
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="quiz-section" id="quiz">
+    <h2>Vidensspørgsmål</h2>
+    <p class="quiz-intro">Test din viden om knæ og hofte. Vælg det bedste svar og tjek din besvarelse.</p>
+
+    <!-- Q1 -->
+    <div class="question-block" id="q1">
+      <p class="q-text">1. Hvor vurderes effusion sensitivt i knæet?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q1" value="A"> A) Infrapatellart</label>
+        <label><input type="radio" name="q1" value="B"> B) Lateralt for patella</label>
+        <label><input type="radio" name="q1" value="C"> C) I den suprapatellare recess</label>
+        <label><input type="radio" name="q1" value="D"> D) Posteriort alene</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q1','C','Korrekt! Den suprapatellare recess kommunikerer direkte med ledhulen og er det mest sensitive og lettilgængelige sted for påvisning af effusion og synovit ved ultralyd.','Ikke korrekt. Den suprapatellare recess er det mest sensitive sted — den kommunikerer direkte med ledhulen og er lettilgængelig ved ultralyd.')">Tjek svar</button>
+      <div class="q-feedback" id="q1-feedback"></div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="question-block" id="q2">
+      <p class="q-text">2. CPPD (pyrofosfatgigt) i knæet ses hyppigst som:</p>
+      <div class="q-options">
+        <label><input type="radio" name="q2" value="A"> A) Kalcifikation i femoralbrusk eller menisci</label>
+        <label><input type="radio" name="q2" value="B"> B) Isoleret bakercyste</label>
+        <label><input type="radio" name="q2" value="C"> C) Fortykket patellarsene</label>
+        <label><input type="radio" name="q2" value="D"> D) Subkutant ødem</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q2','A','Korrekt! CPPD i knæet ses hyppigst som hyperekkoiske kalcifikationer i femoralbrusk eller menisci. Dobbeltkonturtegnet kan ses på femoralbrusk.','Ikke korrekt. CPPD ses hyppigst som kalcifikation i femoralbrusk eller menisci — en typisk UL-finding man bør kende.')">Tjek svar</button>
+      <div class="q-feedback" id="q2-feedback"></div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="question-block" id="q3">
+      <p class="q-text">3. Baker cyste er oftest:</p>
+      <div class="q-options">
+        <label><input type="radio" name="q3" value="A"> A) Primær sygdom uden underliggende årsag</label>
+        <label><input type="radio" name="q3" value="B"> B) Sekundær til intraartikulær patologi</label>
+        <label><input type="radio" name="q3" value="C"> C) Et tegn på septisk artrit</label>
+        <label><input type="radio" name="q3" value="D"> D) Isoleret bursit uden ledinvolvering</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q3','B','Korrekt! Baker cyste er næsten altid sekundær til intraartikulær patologi — fx osteoartrose, menisklæsion eller inflammatorisk artrit. Find og behandl den underliggende årsag.','Ikke korrekt. Baker cyste er næsten altid sekundær til intraartikulær patologi — det er vigtigt at udrede den underliggende årsag.')">Tjek svar</button>
+      <div class="q-feedback" id="q3-feedback"></div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="question-block" id="q4">
+      <p class="q-text">4. Hvor lokaliseres effusion bedst ved UL-scanning af hofteleddet?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q4" value="A"> A) Lateralt over trochanter major</label>
+        <label><input type="radio" name="q4" value="B"> B) Anteriort langs collum femoris</label>
+        <label><input type="radio" name="q4" value="C"> C) Posteriort i fossa ischiorectalis</label>
+        <label><input type="radio" name="q4" value="D"> D) Medialt ved adduktorerne</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q4','B','Korrekt! Effusion i hofteleddet lokaliseres bedst anteriort langs collum femoris. Kapslen er stram og tæt tilhæftet anteriort, og overskydende synovialvæske samler sig i den anteriore recess.','Ikke korrekt. Effusion vurderes bedst anteriort langs collum femoris — det er standardprojektionens primære mål.')">Tjek svar</button>
+      <div class="q-feedback" id="q4-feedback"></div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="question-block" id="q5">
+      <p class="q-text">5. Hvilken muskel er primær hoftefleksor og kan forårsage anteriore hoftesmerter ved bursit eller overbelastning?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q5" value="A"> A) m. gluteus medius</label>
+        <label><input type="radio" name="q5" value="B"> B) m. adductor longus</label>
+        <label><input type="radio" name="q5" value="C"> C) m. iliopsoas</label>
+        <label><input type="radio" name="q5" value="D"> D) m. gluteus maximus</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q5','C','Korrekt! m. iliopsoas er den primære hoftefleksor. Senen passerer anteriort over hofteleddet og kan forårsage anteriore hoftesmerter ved tendinopati, bursit (bursa iliopsoas) eller snap hip.','Ikke korrekt. m. iliopsoas er primær hoftefleksor — senen passerer anteriort over hofteleddet og er en hyppig årsag til anteriore hoftesmerter.')">Tjek svar</button>
+      <div class="q-feedback" id="q5-feedback"></div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="question-block" id="q6">
+      <p class="q-text">6. Hvad er den hyppigste årsag til laterale hoftesmerter ved UL-undersøgelse?</p>
+      <div class="q-options">
+        <label><input type="radio" name="q6" value="A"> A) Tydelig effusion i bursa trochanterica</label>
+        <label><input type="radio" name="q6" value="B"> B) Intraartikulær effusion i hofteleddet</label>
+        <label><input type="radio" name="q6" value="C"> C) Labrumlæsion anteriort</label>
+        <label><input type="radio" name="q6" value="D"> D) Entesopati eller gluteal tendinopati ved trochanter major</label>
+      </div>
+      <button class="check-btn" onclick="checkAnswer('q6','D','Korrekt! Ved laterale hoftesmerter ses der ofte ingen tydelig væske i bursa trochanterica. Symptomerne skyldes hyppigst entesopati eller gluteal tendinopati ved trochanter major — ikke bursit i klassisk forstand.','Ikke korrekt. Laterale hoftesmerter skyldes hyppigst entesopati eller gluteal tendinopati, ikke effusion i bursa trochanterica. Dette er klinisk vigtigt for korrekt behandling.')">Tjek svar</button>
+      <div class="q-feedback" id="q6-feedback"></div>
+    </div>
+
+  </div><!-- /quiz -->
+
+  <div class="footer-nav">
+    <a href="modul2_albue_skulder.html">← Modul 2: Albue og skulder</a>
+    <a href="modul4_taeer_ankler.html">Modul 4: Tæer og ankler →</a>
+  </div>
+
+</div><!-- /page-wrapper -->
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const el = document.documentElement;
+    const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+    document.getElementById('progress-bar').style.width = pct + '%';
+  });
+
+  // Quiz check
+  function checkAnswer(qId, correct, okMsg, wrongMsg) {
+    const sel = document.querySelector(`input[name="${qId}"]:checked`);
+    const fb  = document.getElementById(`${qId}-feedback`);
+    if (!sel) { fb.style.display='block'; fb.className='q-feedback wrong'; fb.textContent='Vælg venligst et svar.'; return; }
+    fb.style.display = 'block';
+    if (sel.value === correct) {
+      fb.className = 'q-feedback correct';
+      fb.textContent = '✓ ' + okMsg;
+    } else {
+      fb.className = 'q-feedback wrong';
+      fb.textContent = '✗ ' + wrongMsg;
+    }
+  }
+</script>
+</body>
+</html>
