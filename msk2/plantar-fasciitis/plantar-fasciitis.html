@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plantar fasciitis — MSK Ultralyd</title>
+<style>
+  :root {
+    --blue-dark:   #1a3a5c;
+    --blue-mid:    #2563a8;
+    --blue-light:  #EEF4FB;
+    --blue-accent: #BDD7EE;
+    --teal:        #0d6e7a;
+    --teal-light:  #e6f4f6;
+    --green:       #2E7D32;
+    --green-bg:    #E8F5E9;
+    --orange:      #c45000;
+    --orange-bg:   #FFF3E0;
+    --red:         #b71c1c;
+    --red-bg:      #FFEBEE;
+    --grey-text:   #2c2c2c;
+    --grey-light:  #F5F7FA;
+    --border:      #D0DFF0;
+    --white:       #ffffff;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--grey-text);
+    background: #F0F4F9;
+  }
+  .page-wrapper { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+  /* ── Header ── */
+  .topic-header {
+    background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 100%);
+    color: white;
+    padding: 2.5rem 2.2rem 2rem;
+    border-radius: 14px;
+    margin-bottom: 2.2rem;
+  }
+  .topic-header .tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 0.9rem;
+  }
+  .topic-header h1 { font-size: 2rem; font-weight: 800; margin-bottom: 0.35rem; }
+  .topic-header p  { font-size: 1.05rem; opacity: 0.85; }
+
+  /* ── Sections ── */
+  .section {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 2rem 2.2rem 2.2rem;
+    margin-bottom: 1.8rem;
+  }
+  .section h2 {
+    font-size: 1.3rem;
+    color: var(--blue-dark);
+    font-weight: 700;
+    margin-bottom: 1.1rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 2px solid var(--blue-accent);
+  }
+  .section h3 {
+    font-size: 1.05rem;
+    color: var(--blue-mid);
+    font-weight: 700;
+    margin: 1.6rem 0 0.6rem;
+  }
+  .section p  { margin-bottom: 0.9rem; }
+  .section ul, .section ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  .section li { margin-bottom: 0.4rem; }
+
+  /* ── Callouts ── */
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin: 1.3rem 0;
+    border-left: 4px solid;
+  }
+  .callout.info    { background: var(--blue-light);  border-color: var(--blue-mid); }
+  .callout.tip     { background: var(--green-bg);    border-color: var(--green); }
+  .callout.warning { background: var(--orange-bg);   border-color: var(--orange); }
+  .callout.alert   { background: var(--red-bg);      border-color: var(--red); }
+  .callout.anatomy { background: var(--teal-light);  border-color: var(--teal); }
+  .callout strong {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.35rem;
+  }
+  .callout.info    strong { color: var(--blue-mid); }
+  .callout.tip     strong { color: var(--green); }
+  .callout.warning strong { color: var(--orange); }
+  .callout.alert   strong { color: var(--red); }
+  .callout.anatomy strong { color: var(--teal); }
+
+  /* ── Billeder ── */
+  .img-block { margin: 1.6rem 0; text-align: center; }
+  .img-block img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.09);
+  }
+  .img-block.medium img { max-width: 65%; }
+  .img-block.small  img { max-width: 42%; }
+  .img-caption {
+    font-size: 0.85rem;
+    color: #555;
+    font-style: italic;
+    margin-top: 0.55rem;
+    line-height: 1.5;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .img-row {
+    display: flex;
+    gap: 1.1rem;
+    margin: 1.6rem 0;
+    align-items: flex-start;
+  }
+  .img-row .img-block { flex: 1; margin: 0; }
+
+  /* ── Måle-tabel ── */
+  .measure-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.1rem 0;
+    font-size: 0.93rem;
+  }
+  .measure-table th {
+    background: var(--blue-dark);
+    color: white;
+    padding: 0.65rem 1rem;
+    text-align: left;
+    font-weight: 600;
+  }
+  .measure-table td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .measure-table tr:nth-child(even) td { background: var(--grey-light); }
+  .normal  { color: var(--green);  font-weight: 700; }
+  .patol   { color: var(--red);    font-weight: 700; }
+
+  /* ── Sammenlignings-grid ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.3rem 0;
+  }
+  .compare-box {
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+  }
+  .compare-box.normal-box  { background: var(--green-bg);  border: 1px solid #a5d6a7; }
+  .compare-box.patol-box   { background: var(--red-bg);    border: 1px solid #ef9a9a; }
+  .compare-box h4 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.5rem;
+  }
+  .compare-box.normal-box h4 { color: var(--green); }
+  .compare-box.patol-box  h4 { color: var(--red); }
+  .compare-box ul { padding-left: 1.2rem; font-size: 0.9rem; }
+  .compare-box li { margin-bottom: 0.3rem; }
+
+  @media (max-width: 600px) {
+    .img-row, .compare-grid { flex-direction: column; grid-template-columns: 1fr; }
+    .topic-header h1 { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- Header -->
+  <div class="topic-header">
+    <div class="tag">Fod &amp; ankel · Enthesopati</div>
+    <h1>Plantar fasciitis</h1>
+    <p>Ultralyd af fascia plantaris — diagnostik og klinisk vurdering</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       I — INDIKATION (skjult som skelet)
+       ══════════════════════════════════════════ -->
+  <div class="section">
+    <h2>Klinisk baggrund</h2>
+
+    <p>Plantar fasciitis er den hyppigste årsag til hælsmerter og udgør op mod 15% af alle fodrelaterede konsultationer. Tilstanden skyldes en degenerativ enthesopati ved fasciens udspring fra calcaneus — ikke primært en inflammatorisk proces, selvom betegnelsen "fasciitis" antyder dette.</p>
+
+    <p>Den typiske patient præsenterer med <strong>belastningsudløste hælsmerter</strong>, der er værst ved de første skridt om morgenen eller efter hvile, og gradvist aftager ved gang. Smerterne er lokaliseret til den mediale og centrale del af hælen, svarende til fasciens insertion på calcaneus.</p>
+
+    <h3>Hvornår er ultralyd indiceret?</h3>
+    <ul>
+      <li>Klinisk diagnose er usikker — ekskluder andre årsager til hælsmerter</li>
+      <li>Manglende respons på initial konservativ behandling (>6–8 uger)</li>
+      <li>Vejledning af injektion (kortikosteroid eller PRP)</li>
+      <li>Monitorering af behandlingssvar</li>
+      <li>Bilateral præsentation — mistanke om inflammatorisk artropati</li>
+    </ul>
+
+    <div class="callout info">
+      <strong>Differentialdiagnoser ved hælsmerter</strong>
+      Nervus plantaris lateralis kompression (Baxters nerve) · Stressfraktur i calcaneus · Fedtpudeatrofi · Achillessene-patologi · Hæl-bursit · Seronegativ spondyloartropati (entesit)
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       A — ACQUISITION
+       ══════════════════════════════════════════ -->
+  <div class="section">
+    <h2>Anatomi og scanningsplan</h2>
+
+    <p>Fascia plantaris er en tyk fibrøs aponeurose der udspringer fra calcaneus' mediale tuberositas og forløber distalt langs fodsålen, hvor den deler sig i fem stråler til de proksimale phalanger. Fascien fungerer som en statisk stabilisator af den mediale fodbuende og absorberer aksiale belastningskræfter.</p>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="Fod-plantar-fascia-plantaris0.png" alt="Fascia plantaris — anatomisk illustration, forfra">
+        <div class="img-caption">Fascia plantaris set fra fodsålen: udspring fra calcaneus og forløb distalt til de fem tæer.</div>
+      </div>
+      <div class="img-block">
+        <img src="Fod-lateral-medial-fascia-plantaris.png" alt="Fascia plantaris — lateral profil">
+        <div class="img-caption">Lateral profil af foden med fascia plantaris og dens relation til calcaneus og den mediale fodbue.</div>
+      </div>
+    </div>
+
+    <h3>Probe og patientpositionering</h3>
+    <ul>
+      <li><strong>Probe:</strong> Lineær høj-frekvens transducer, 12–18 MHz</li>
+      <li><strong>Patientposition:</strong> Liggende på maven med foden i neutralposition og tæerne hængende frit over kanten — eller siddende med foden fladt på undersøgelseslejet</li>
+      <li><strong>Start:</strong> Longitudinelt snit langs fasciens akse, med probens proksimale ende over calcaneus. Dette er primærplanet.</li>
+      <li><strong>Supplér:</strong> Transversalt snit for at vurdere fasciens bredde og lateral/medial fordeling af patologi</li>
+    </ul>
+
+    <div class="callout tip">
+      <strong>Teknik-tip</strong>
+      Undgå anisotropi-artefakter: hold proben strengt parallel med fasciens forløb. Selv en lille vinkelafvigelse giver falskt hypoekkoisk signal og kan forveksles med patologi. Hvis billedet ser unormalt ud — kip proben og se om det forsvinder.
+    </div>
+
+    <div class="img-block">
+      <img src="IMG_7819.PNG" alt="Scanningsplaner A, B, C langs fodsålen">
+      <div class="img-caption">Tre scanningspositioner langs fodsålen (A = proksimalt ved calcaneus, B = midt, C = distalt) med tilsvarende longitudinelle UL-billeder. PF = plantar fascia.</div>
+    </div>
+
+    <p>Det primære diagnostiske billede opnås ved position A — proksimalt, med calcaneus som bagerste ekkostruktur og fasciens insertion tydeligt visualiseret.</p>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       I — INTERPRETATION
+       ══════════════════════════════════════════ -->
+  <div class="section">
+    <h2>Normale og patologiske fund</h2>
+
+    <h3>Normalbilledet</h3>
+    <p>Normal fascia plantaris fremstår som en <strong>tynd, hyperekkoisk, fibrillær struktur</strong> med parallelle linier og skarp afgrænsning mod calcaneus proximalt. Den minder om en velorganiseret kabelstruktur — ensartet og regelmæssig hele vejen.</p>
+
+    <div class="img-block">
+      <img src="Fod-plantar-fascia-plantaris-scan-planes-normal-anatomy-2.png" alt="Normal fascia plantaris — UL-billeder">
+      <div class="img-caption">Normal fascia plantaris. Fodsål med scanningsposition (venstre) og tilsvarende longitudinelle UL-billeder (A–C). Bemærk den fine, parallelle, hyperekkoiske fiberstruktur.</div>
+    </div>
+
+    <h3>Plantar fasciitis — det patologiske billede</h3>
+    <p>Ved fasciitis mister fascien sin velorganiserede fiberstruktur. Billedet beskrives som det <strong>"mudrede" eller "opløste" billede</strong> — som om fibrene er gået i stykker. Typiske fund:</p>
+
+    <div class="compare-grid">
+      <div class="compare-box normal-box">
+        <h4>Normalt</h4>
+        <ul>
+          <li>Tykkelse 2–4 mm</li>
+          <li>Hyperekkoisk (lys)</li>
+          <li>Homogen, fibrillær struktur</li>
+          <li>Parallelle linier</li>
+          <li>Skarp afgrænsning mod calcaneus</li>
+          <li>Ingen ødem / væske</li>
+        </ul>
+      </div>
+      <div class="compare-box patol-box">
+        <h4>Plantar fasciitis</h4>
+        <ul>
+          <li>Tykkelse <strong>&gt;4 mm</strong> (typisk 5–8 mm)</li>
+          <li>Hypoekkoisk (mørk, "mudret")</li>
+          <li>Uhomogen, tab af fibrillært mønster</li>
+          <li>Kaotisk / brudt struktur</li>
+          <li>Sløret afgrænsning</li>
+          <li>Evt. ødem eller øget kartegning</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="img-block">
+      <img src="IMG_7821.PNG" alt="Plantar fasciitis — patologiske UL-billeder 4A og 4B">
+      <div class="img-caption">Plantar fasciitis. 4A: Longitudinelt snit med tydelig fortykkelse og hypoekkoicitet ved calcaneus-insertionen. 4B: Tilsvarende fund i transversalt snit. (Kilde: ijspt.scholasticahq.com)</div>
+    </div>
+
+    <div class="img-row">
+      <div class="img-block">
+        <img src="IMG_7823.PNG" alt="Normal vs. abnorm fascia plantaris — sammenligning">
+        <div class="img-caption">Direkte sammenligning: normal fascia plantaris (øverst) og fasciitis med fortykkelse og hypoekkoicitet (nederst). Probe-placering illustreret til højre.</div>
+      </div>
+    </div>
+
+    <h3>Måling af fascietykkelse</h3>
+    <p>Tykkelsen måles i det longitudinelle plan, 1 cm distalt for calcaneus-insertionen, i hvile uden dorsalfleksion. Sammenligning med kontralateral side er værdifuld.</p>
+
+    <table class="measure-table">
+      <thead>
+        <tr><th>Fund</th><th>Tykkelse</th><th>Fortolkning</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Normal</td>
+          <td class="normal">2,0 – 4,0 mm</td>
+          <td>Fysiologisk variation</td>
+        </tr>
+        <tr>
+          <td>Grænseværdi</td>
+          <td style="color:#e65100; font-weight:700">4,0 – 5,0 mm</td>
+          <td>Vurdér øvrige UL-fund og klinik</td>
+        </tr>
+        <tr>
+          <td>Patologisk</td>
+          <td class="patol">&gt; 4,0–5,0 mm</td>
+          <td>Støtter diagnosen plantar fasciitis</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="img-block">
+      <img src="Lars-290426.png" alt="Bilateral sammenligning — plantar fasciitis vs. normal">
+      <div class="img-caption">Bilateral sammenligning i samme billede: venstre side (afficieret) viser tydeligt fortykket og hypoekkoisk fascia ved calcaneus-insertionen. Højre side (rask kontrol) fremstår tyndere med bedre bevaret fiberstruktur. Brug altid den asymptomatiske side som intern kontrol.</div>
+    </div>
+
+    <div class="img-block small">
+      <img src="IMG_7815.jpg" alt="Måling: 5,80 mm og 4,16 mm">
+      <div class="img-caption">Tilsvarende målinger fra samme patient: afficieret side 5,80 mm vs. kontralateral 4,16 mm. Asymmetrien alene støtter diagnosen — selv uden absolut overskredet normalgrænse.</div>
+    </div>
+
+    <div class="callout info">
+      <strong>Bilateral sammenligning — altid god praksis</strong>
+      Scan begge sider og brug den symptomfrie side som intern kontrol. Asymmetri i tykkelse >1–2 mm er klinisk meningsfuld, selv når absolutte værdier er i grænseområdet. Side-by-side visning på skærmen giver et øjeblikkeligt visuelt indtryk der er svært at opnå med tal alene.
+    </div>
+
+    <div class="callout warning">
+      <strong>Pitfall — tykkelse alene er ikke tilstrækkeligt</strong>
+      Fascietykkelse >4 mm ses også hos asymptomatiske individer og ved kraftigt BMI. Diagnostisk vægt bør lægges på <em>kombinationen</em> af tykkelse, ekkogenicitet og strukturtab — ikke på ét enkelt parameter.
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       M — MEDICAL DECISION MAKING
+       ══════════════════════════════════════════ -->
+  <div class="section">
+    <h2>Klinisk vurdering og behandling</h2>
+
+    <p>UL-fundene skal altid tolkes i sammenhæng med den kliniske præsentation. Et tykt, hypoekkoisk fund uden symptomer kræver ikke behandling. Omvendt kan en patient med klassiske symptomer og borderline UL-fund sagtens have plantar fasciitis klinisk.</p>
+
+    <h3>Konservativ behandling (1. linje)</h3>
+    <ul>
+      <li>Stræk af fascia plantaris og achillessene — dokumenteret effekt</li>
+      <li>Hælindlæg og aflastning</li>
+      <li>Skomodifikation</li>
+      <li>Fysioterapi med ekscentrisk træning</li>
+      <li>NSAID kortvarigt ved akut fase</li>
+    </ul>
+
+    <h3>Intervention</h3>
+    <ul>
+      <li><strong>UL-vejledt kortikosteroidinjektion:</strong> Effektiv på kort sigt (6–8 uger). Risiko for fascieruptur ved gentagne injektioner — maksimalt 2–3 per forløb. Injiceres i det perифascielle væv, <em>ikke</em> ind i selve fascien.</li>
+      <li><strong>PRP (platelet-rich plasma):</strong> Voksende evidens for effekt ved kronisk fasciitis. Anvendes når steroid har svigtet.</li>
+      <li><strong>ESWT (stødbygebehandling):</strong> Effektiv ved kronisk tilstand. Kan kombineres med UL-vejledning.</li>
+    </ul>
+
+    <div class="callout alert">
+      <strong>Risiko for fascieruptur</strong>
+      Gentagne steroidinjektioner direkte i fascien øger risikoen for partiel eller komplet ruptur markant. UL-vejledning er essentiel for korrekt nåleplacering i det perifascielle lag.
+    </div>
+
+    <h3>Hvornår revurderes?</h3>
+    <p>Ved manglende bedring efter 3–6 måneders konservativ behandling bør diagnosen revurderes. UL kan gentages for at vurdere ændring i tykkelse og ekkogenicitet som surrogatmarkør for behandlingssvar.</p>
+
+    <div class="callout tip">
+      <strong>Bilateral fasciitis</strong>
+      Bilateral præsentation — særligt uden traume eller overbelastningsanamnese — bør rejse mistanke om seronegativ spondyloartropati (psoriasisartrit, reaktiv artrit, ankyloserende spondylit). Entesit er et kardinaltegn. Henvis til reumatolog.
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
